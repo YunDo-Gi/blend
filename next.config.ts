@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
 
     return config;
   },
+
+  compiler: {
+    styledComponents: true,
+  },
 };
 
 export default nextConfig;
