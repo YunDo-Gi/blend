@@ -3,19 +3,24 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --light: #f8f8f5;
-  --dark: #1f1f1e;
+  --background: #f8f8f5;
+  --foreground: #1f1f1e;
 }
 
 @theme {
   --color-background: #f8f8f5;
   --color-foreground: #1f1f1e;
+  --color-line: #cfcfcc;
   --color-primary: #2cff05;
+
+  --animation-duration-toggle-theme: 700ms;
+  --easing-toggle-theme: ease-in-out;
 }
 
 .dark {
   --color-background: #1f1f1e;
   --color-foreground: #f8f8f5;
+  --color-line: #3e3e3d;
   --color-primary: #2cff05;
 }
 

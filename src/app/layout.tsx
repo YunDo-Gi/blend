@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import StyledComponentsRegistry from '@/lib/registry';
+import Header from '@/layout/header';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,13 +28,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased transition-colors duration-700 ease-in-out`}
+        className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased transition-colors duration-(--animation-duration-toggle-theme) ease-(--easing-toggle-theme)`}
       >
-        <ThemeProvider attribute="class">
-          <div className="flex min-h-screen flex-col">
-            <main className="flex-1">{children}</main>
-          </div>
-        </ThemeProvider>
+        <StyledComponentsRegistry>
+          <ThemeProvider attribute="class">
+            <Header />
+            <div className="flex min-h-screen flex-col">
+              <main className="flex-1">{children}</main>
+            </div>
+          </ThemeProvider>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );
