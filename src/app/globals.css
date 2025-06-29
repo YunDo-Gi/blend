@@ -13,8 +13,12 @@
   --color-line: #cfcfcc;
   --color-primary: #2cff05;
 
+  --layout-grid-padding: 1rem;
+
   --animation-duration-toggle-theme: 700ms;
   --easing-toggle-theme: ease-in-out;
+
+  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
 }
 
 .dark {

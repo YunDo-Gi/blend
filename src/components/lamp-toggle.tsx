@@ -7,10 +7,10 @@ export default function ClickableLampIcon() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex flex-col items-center p-4">
+    <div className="flex flex-col items-center">
       <button
         onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="flex flex-col items-center p-2"
+        className="flex flex-col items-center"
         aria-label="램프 아이콘 클릭"
       >
         <LampIcon
