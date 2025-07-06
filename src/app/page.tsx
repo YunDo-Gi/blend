@@ -1,6 +1,7 @@
 import HeroSection from '@/components/main/hero-section';
 import AuthorsSection from '@/components/main/authors-section';
 import RecentSection from '@/components/main/recent-section';
+import StatsSection from '@/components/main/stats-section';
 import LampToggle from '@/components/lamp-toggle';
 
 export default function Home() {
@@ -20,8 +21,11 @@ export default function Home() {
             <RecentSection />
           </div>
           <div className="border-line col-span-3 border-r p-(--layout-grid-padding)">3</div>
-          <div className="border-line col-span-2">
+          <div className="border-line col-span-2 flex flex-col justify-between">
             <LampToggle />
+            <div className="mt-4">
+              <StatsSection />
+            </div>
           </div>
         </div>
       </div>

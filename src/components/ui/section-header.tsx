@@ -8,7 +8,7 @@ export default function SectionHeader({ title, children }: SectionHeaderProps) {
     <div className="w-full">
       {/* Header */}
       <div className="mb-1 flex items-center justify-between">
-        <h2 className="font-mono text-sm font-medium tracking-wide">{title}</h2>
+        <h2 className="font-mono text-sm font-normal tracking-wide">{title}</h2>
         {children && <div>{children}</div>}
       </div>
 

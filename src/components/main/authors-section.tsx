@@ -85,7 +85,7 @@ export default function AuthorsSection() {
             href={currentAuthor.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-primary group flex items-center justify-between text-sm transition-colors"
+            className="hover:text-primary/75 group flex items-center justify-between text-sm transition-colors"
           >
             <span>GITHUB</span>
             <span className="transition-transform group-hover:translate-x-1">→</span>

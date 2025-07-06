@@ -13,6 +13,7 @@
   --color-line: #cfcfcc;
   --color-primary: #2cff05;
   --color-gray: #a8a8a6;
+  --color-gray-foreground: #5f5f5e;
 
   --layout-grid-padding: 1rem;
 
@@ -28,7 +29,7 @@
   --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
-  --aspect-image: 16 / 9;
+  --aspect-image: 16 / 10;
 }
 
 .dark {
@@ -36,6 +37,7 @@
   --color-foreground: #f8f8f5;
   --color-line: #3e3e3d;
   --color-primary: #2cff05;
+  --color-gray-foreground: #cfcfcc;
 }
 
 body {
