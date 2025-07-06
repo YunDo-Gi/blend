@@ -74,7 +74,6 @@ const LogoContainer = styled.div`
   justify-content: center;
   gap: 14px;
   cursor: pointer;
-  padding: 12px 0;
 
   &:hover ${MorphShape} {
     border-radius: 50%;
