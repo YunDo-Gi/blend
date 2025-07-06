@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import AvatarIcon from '../icons/avatar.svg';
+import InteractiveAvatar from '../icons/interactive-avatar';
 import SectionHeader from '../ui/section-header';
 
 interface Author {
@@ -64,7 +64,7 @@ export default function AuthorsSection() {
 
       {/* Avatar */}
       <div className="border-foreground mb-6 flex w-full items-center justify-center border p-2">
-        <AvatarIcon className="max-h-full max-w-full" />
+        <InteractiveAvatar className="max-h-full max-w-full" />
       </div>
 
       {/* Author Info */}
