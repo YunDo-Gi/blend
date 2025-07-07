@@ -2,8 +2,8 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-line bg-background">
-      <div className="mx-auto max-w-7xl p-(--layout-grid-padding)">
+    <footer className="border-line bg-background border-t">
+      <div className="border-line mx-auto max-w-7xl border-x p-(--layout-grid-padding)">
         <div className="flex flex-col gap-6 py-8 md:flex-row md:items-center md:justify-between">
           {/* Logo/Brand */}
           <div className="flex flex-col gap-2">
@@ -43,9 +43,9 @@ export default function Footer() {
               <h3 className="text-sm font-medium">Social</h3>
               <ul className="space-y-1 text-xs text-gray-600">
                 <li>
-                  <a 
-                    href="https://github.com" 
-                    target="_blank" 
+                  <a
+                    href="https://github.com"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-primary transition-colors"
                   >
@@ -53,9 +53,9 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a 
-                    href="https://twitter.com" 
-                    target="_blank" 
+                  <a
+                    href="https://twitter.com"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-primary transition-colors"
                   >
@@ -63,10 +63,7 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a 
-                    href="mailto:contact@blend.com"
-                    className="hover:text-primary transition-colors"
-                  >
+                  <a href="mailto:contact@blend.com" className="hover:text-primary transition-colors">
                     Email
                   </a>
                 </li>
@@ -76,7 +73,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-line pt-6 pb-4">
+        <div className="border-line border-t pt-6 pb-4">
           <div className="flex flex-col gap-2 text-xs text-gray-500 md:flex-row md:items-center md:justify-between">
             <p>&copy; 2025 Blend. All rights reserved.</p>
             <div className="flex gap-4">

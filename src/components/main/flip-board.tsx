@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import SectionHeader from '../ui/section-header';
 
 interface Post {
@@ -8,7 +8,6 @@ interface Post {
   title: string;
 }
 
-// 더미 데이터
 const DUMMY_POSTS: Post[] = [
   { date: '06.09', title: '리액트로 애니메이션 구현하는 공간입니다. 제목을 입력해주세요.' },
   { date: '06.09', title: '리액트로 애니메이션 구현하는 공간입니다. 제목을 입력해주세요.' },
@@ -19,33 +18,73 @@ const DUMMY_POSTS: Post[] = [
 
 const GRID_CONFIG = {
   cols: 40,
-  rows: 5, // 헤더 제외하고 포스트 5개만
+  rows: 5,
 };
 
-// 단순 셀 컴포넌트
-const FlipCell = ({ char }: { char: string }) => {
+const FLIP_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?-+:*&'.split('');
+
+const FlipCell = ({
+  targetChar,
+  shouldFlip,
+  rowIndex,
+  colIndex,
+}: {
+  targetChar: string;
+  shouldFlip: boolean;
+  rowIndex: number;
+  colIndex: number;
+}) => {
+  const [currentChar, setCurrentChar] = useState(targetChar);
+  const flipTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (shouldFlip) {
+      const delay = rowIndex * 100 + colIndex * 20;
+
+      flipTimeoutRef.current = setTimeout(() => {
+        const flipCount = Math.floor(Math.random() * 10) + 5;
+        let currentFlip = 0;
+
+        const flipInterval = setInterval(() => {
+          if (currentFlip < flipCount) {
+            const randomChar = FLIP_CHARS[Math.floor(Math.random() * FLIP_CHARS.length)];
+            setCurrentChar(randomChar);
+            currentFlip++;
+          } else {
+            setCurrentChar(targetChar);
+            clearInterval(flipInterval);
+          }
+        }, 80);
+      }, delay);
+    }
+
+    return () => {
+      if (flipTimeoutRef.current) {
+        clearTimeout(flipTimeoutRef.current);
+      }
+    };
+  }, [targetChar, shouldFlip, rowIndex, colIndex]);
+
   return (
-    <div className="bg-line relative h-8 overflow-hidden inset-shadow-sm">
-      {/* 가운데 가로줄 */}
+    <div className="bg-gray-light relative h-8 overflow-hidden inset-shadow-sm">
       <div className="bg-background absolute top-1/2 right-0 left-0 z-10 h-px -translate-y-0.5" />
 
-      {/* 셀 내용 */}
-      <div className={`flex h-full w-full items-center justify-center font-mono text-sm font-semibold`}>{char}</div>
+      <div className="flex h-full w-full items-center justify-center font-mono text-sm font-semibold">
+        {currentChar}
+      </div>
     </div>
   );
 };
 
 export default function FlipBoard() {
   const [gridData, setGridData] = useState<string[][]>(
-    // 초기값: 빈 공간으로 채운 고정 크기 배열 (헤더 제외)
     Array.from({ length: GRID_CONFIG.rows }, () => Array.from({ length: GRID_CONFIG.cols }, () => ' ')),
   );
+  const [shouldFlip, setShouldFlip] = useState(false);
 
-  // 그리드 데이터 생성
   useEffect(() => {
     const posts = DUMMY_POSTS.slice(0, 5);
 
-    // 포스트 행들 생성 (헤더 제외)
     const postRows = posts.map((post) => {
       const maxTitleLength = 32;
       const truncatedTitle =
@@ -56,25 +95,57 @@ export default function FlipBoard() {
     });
 
     setGridData(postRows);
+
+    setTimeout(() => {
+      setShouldFlip(true);
+      setTimeout(() => {
+        setShouldFlip(false);
+      }, 3000);
+    }, 500);
   }, []);
+  const updateBoard = () => {
+    if (shouldFlip) return;
+
+    setShouldFlip(true);
+
+    setTimeout(() => {
+      setShouldFlip(false);
+    }, 3000);
+  };
 
   return (
     <>
-      <SectionHeader title="/ POSTS" />
+      <SectionHeader title="/ POSTS">
+        <button
+          onClick={updateBoard}
+          className={`font-mono text-sm transition-colors ${
+            shouldFlip ? 'text-gray cursor-not-allowed' : 'text-foreground hover:text-primary'
+          }`}
+          disabled={shouldFlip}
+        >
+          [update]
+        </button>
+      </SectionHeader>
       <div className="border-foreground border p-4">
-        {/* 헤더 텍스트 - 같은 그리드 구조로 정렬 */}
         <div className="mb-2 grid grid-cols-[repeat(40,1fr)] gap-1 font-mono">
-          <div className="col-span-7">TIME</div>
-          <div className="col-span-33">TITLE</div>
+          <div className="col-span-6">TIME</div>
+          <div className="col-span-34">TITLE</div>
         </div>
 
-        {/* 라인별 레이아웃 - 각 라인 사이 간격 */}
         <div className="flex flex-col gap-2">
           {Array.from({ length: GRID_CONFIG.rows }).map((_, rowIndex) => (
             <div key={rowIndex} className="grid grid-cols-[repeat(40,1fr)] gap-1">
               {Array.from({ length: GRID_CONFIG.cols }).map((_, colIndex) => {
                 const char = gridData[rowIndex]?.[colIndex] || ' ';
-                return <FlipCell key={`${rowIndex}-${colIndex}`} char={char} />;
+                return (
+                  <FlipCell
+                    key={`${rowIndex}-${colIndex}`}
+                    targetChar={char}
+                    shouldFlip={shouldFlip}
+                    rowIndex={rowIndex}
+                    colIndex={colIndex}
+                  />
+                );
               })}
             </div>
           ))}
