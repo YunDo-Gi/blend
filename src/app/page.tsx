@@ -2,6 +2,7 @@ import HeroSection from '@/components/main/hero-section';
 import AuthorsSection from '@/components/main/authors-section';
 import RecentSection from '@/components/main/recent-section';
 import StatsSection from '@/components/main/stats-section';
+import FlipBoard from '@/components/main/flip-board';
 import LampToggle from '@/components/lamp-toggle';
 
 export default function Home() {
@@ -20,7 +21,7 @@ export default function Home() {
           <div className="border-line col-span-7 border-r p-(--layout-grid-padding)">
             <RecentSection />
           </div>
-          <div className="border-line col-span-3 border-r p-(--layout-grid-padding)">3</div>
+          <div className="border-line col-span-3 border-r p-(--layout-grid-padding)">2</div>
           <div className="border-line col-span-2 flex flex-col justify-between">
             <LampToggle />
             <div className="mt-4">
@@ -43,9 +44,11 @@ export default function Home() {
 
       {/* row 4 */}
       <div className="border-line col-span-10 border-b">
-        <div className="border-line mx-auto grid max-w-7xl grid-cols-10 gap-0 border-x">
-          <div className="border-line col-span-5 border-r p-(--layout-grid-padding)">8</div>
-          <div className="col-span-5 p-(--layout-grid-padding)">9</div>
+        <div className="border-line mx-auto grid max-w-7xl grid-cols-12 gap-0 border-x">
+          <div className="border-line col-span-10 border-r p-(--layout-grid-padding)">
+            <FlipBoard />
+          </div>
+          <div className="col-span-2 p-(--layout-grid-padding)">7</div>
         </div>
       </div>
 
