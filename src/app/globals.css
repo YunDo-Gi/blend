@@ -54,3 +54,12 @@ body {
 .font-body {
   font-family: var(--font-body);
 }
+
+/* Button cursor styles */
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
