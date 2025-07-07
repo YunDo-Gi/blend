@@ -202,18 +202,17 @@ export default function PostList({ selectedCategory }: PostListProps) {
       {currentPosts.map((post) => (
         <PostItem key={post.id} date={post.date} title={post.title} />
       ))}
-      
+
       {filteredPosts.length === 0 && (
         <div className="p-8 text-center text-gray-500">해당 카테고리에 게시글이 없습니다.</div>
       )}
 
       {filteredPosts.length > 0 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
       )}
     </div>
   );
 }
+
+// Export total posts count for use in other components
+export const totalPostsCount = allPosts.length;

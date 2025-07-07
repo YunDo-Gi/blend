@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import PageHeader from '@/components/ui/page-header';
 import PostFilters from '@/components/post/post-filters';
-import PostList from '@/components/post/post-list';
+import PostList, { totalPostsCount } from '@/components/post/post-list';
 import CategorySidebar from '@/components/post/category-sidebar';
 
 export default function PostPage() {
@@ -15,7 +15,7 @@ export default function PostPage() {
 
   return (
     <div className="bg-background mx-auto min-h-screen max-w-7xl">
-      <PageHeader />
+      <PageHeader count={totalPostsCount} />
 
       <div className="flex">
         <CategorySidebar onCategoryChange={handleCategoryChange} />
