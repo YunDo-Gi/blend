@@ -11,7 +11,9 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "gray-matter": "^4.0.3",
     "next": "15.3.4",
+    "next-mdx-remote-client": "^2.1.2",
     "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
