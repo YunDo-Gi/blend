@@ -1,16 +1,26 @@
 'use client';
 
-import { useState } from 'react';
-import PageHeader from '@/components/ui/page-header';
-import PostFilters from '@/components/post/post-filters';
-import PostList, { totalPostsCount } from '@/components/post/post-list';
-import CategorySidebar from '@/components/post/category-sidebar';
-
+import { useSearchParams, useRouter } from 'next/navigation';
+import PageHeader from '@/shared/ui/page-header';
+import PostFilters from '@/domain/post-list/components/post-filters';
+import CategorySidebar from '@/domain/post-list/components/category-sidebar';
+import PostList, { totalPostsCount } from '@/domain/post-list/components/post-list';
 export default function PostPage() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (category === 'all') {
+      params.delete('category');
+    } else {
+      params.set('category', category);
+    }
+
+    params.delete('page');
+
+    router.push(`?${params.toString()}`);
   };
 
   return (
@@ -18,12 +28,12 @@ export default function PostPage() {
       <PageHeader count={totalPostsCount} />
 
       <div className="flex">
-        <CategorySidebar onCategoryChange={handleCategoryChange} />
+        <CategorySidebar onCategoryChangeAction={handleCategoryChange} />
 
         <div className="flex-1">
           <div className="p-4">
             <PostFilters />
-            <PostList selectedCategory={selectedCategory} />
+            <PostList />
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import SectionHeader from '../ui/section-header';
+import SectionHeader from '../../../shared/ui/section-header';
 
 interface Post {
   date: string;

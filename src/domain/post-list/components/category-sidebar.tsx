@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import SectionHeader from '../ui/section-header';
+import { useSearchParams } from 'next/navigation';
+import SectionHeader from '../../../shared/ui/section-header';
 
 interface CategoryItem {
   name: string;
@@ -9,7 +9,7 @@ interface CategoryItem {
 }
 
 interface CategorySidebarProps {
-  onCategoryChange: (category: string) => void;
+  onCategoryChangeAction: (category: string) => void;
 }
 
 const categories: CategoryItem[] = [
@@ -19,12 +19,13 @@ const categories: CategoryItem[] = [
   { name: 'Blog Dev Log', value: 'blog' },
 ];
 
-export default function CategorySidebar({ onCategoryChange }: CategorySidebarProps) {
-  const [activeCategory, setActiveCategory] = useState('all');
+export default function CategorySidebar({ onCategoryChangeAction }: CategorySidebarProps) {
+  const searchParams = useSearchParams();
+
+  const activeCategory = searchParams.get('category') || 'all';
 
   const handleCategoryClick = (categoryValue: string) => {
-    setActiveCategory(categoryValue);
-    onCategoryChange(categoryValue);
+    onCategoryChangeAction(categoryValue);
   };
 
   return (

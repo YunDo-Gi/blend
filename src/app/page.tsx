@@ -1,9 +1,9 @@
-import HeroSection from '@/components/main/hero-section';
-import AuthorsSection from '@/components/main/authors-section';
-import RecentSection from '@/components/main/recent-section';
-import StatsSection from '@/components/main/stats-section';
-import FlipBoard from '@/components/main/flip-board';
-import LampToggle from '@/components/lamp-toggle';
+import HeroSection from '@/domain/main/components/hero-section';
+import AuthorsSection from '@/domain/main/components/authors-section';
+import RecentSection from '@/domain/main/components/recent-section';
+import StatsSection from '@/domain/main/components/stats-section';
+import FlipBoard from '@/domain/main/components/flip-board';
+import LampToggle from '@/domain/main/components/lamp-toggle';
 
 export default function Home() {
   return (

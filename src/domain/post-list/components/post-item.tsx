@@ -14,7 +14,7 @@ export default function PostItem({ date, title }: PostItemProps) {
         {/* Shadow/Background rectangle */}
         <div className="bg-foreground aspect-image absolute w-36 opacity-0 transition-all duration-(--animation-duration-toggle-theme) ease-(--easing-toggle-theme) group-hover:translate-x-2 group-hover:opacity-100"></div>
         {/* Main thumbnail */}
-        <div className="bg-background border-line aspect-image relative z-10 flex w-36 items-center justify-center border transition-all duration-(--animation-duration-toggle-theme) ease-(--easing-toggle-theme) group-hover:-translate-y-2 group-hover:transform"></div>
+        <div className="bg-background border-line aspect-image relative flex w-36 items-center justify-center border transition-all duration-(--animation-duration-toggle-theme) ease-(--easing-toggle-theme) group-hover:-translate-y-2 group-hover:transform"></div>
       </div>
 
       {/* Title */}

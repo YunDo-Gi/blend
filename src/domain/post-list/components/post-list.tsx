@@ -1,16 +1,13 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import PostItem from './post-item';
-import Pagination from '../ui/pagination';
+import Pagination from '../../../shared/ui/pagination';
 
 interface Post {
   id: number;
   date: string;
   title: string;
   category: string;
-}
-
-interface PostListProps {
-  selectedCategory: string;
 }
 
 const allPosts: Post[] = [
@@ -166,8 +163,13 @@ const allPosts: Post[] = [
   },
 ];
 
-export default function PostList({ selectedCategory }: PostListProps) {
-  const [currentPage, setCurrentPage] = useState(1);
+export default function PostList() {
+  const searchParams = useSearchParams();
+
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+
+  const selectedCategory = searchParams.get('category') || 'all';
+
   const postsPerPage = 10;
 
   // 카테고리 필터링된 포스트
@@ -185,18 +187,6 @@ export default function PostList({ selectedCategory }: PostListProps) {
     return filteredPosts.slice(startIndex, endIndex);
   }, [filteredPosts, currentPage]);
 
-  // 카테고리가 변경되면 첫 페이지로 이동
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedCategory]);
-
-  // 페이지 변경 핸들러
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    // 페이지 변경 시 스크롤 맨 위로
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
     <div className="bg-background">
       {currentPosts.map((post) => (
@@ -207,12 +197,9 @@ export default function PostList({ selectedCategory }: PostListProps) {
         <div className="p-8 text-center text-gray-500">해당 카테고리에 게시글이 없습니다.</div>
       )}
 
-      {filteredPosts.length > 0 && (
-        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-      )}
+      {filteredPosts.length > 0 && <Pagination currentPage={currentPage} totalPages={totalPages} />}
     </div>
   );
 }
 
-// Export total posts count for use in other components
 export const totalPostsCount = allPosts.length;

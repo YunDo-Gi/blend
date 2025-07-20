@@ -1,4 +1,4 @@
-import SectionHeader from '../ui/section-header';
+import SectionHeader from '../../../shared/ui/section-header';
 
 interface RecentPost {
   id: number;

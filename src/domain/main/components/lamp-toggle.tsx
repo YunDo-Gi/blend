@@ -1,6 +1,6 @@
 'use client';
 
-import LampIcon from '@/components/icons/lamp3.svg';
+import LampIcon from '../../../shared/icons/lamp3.svg';
 import { useTheme } from 'next-themes';
 
 export default function ClickableLampIcon() {

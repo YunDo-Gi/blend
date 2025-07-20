@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import InteractiveAvatar from '../icons/interactive-avatar';
-import SectionHeader from '../ui/section-header';
+import InteractiveAvatar from '../../../shared/icons/interactive-avatar';
+import SectionHeader from '../../../shared/ui/section-header';
 
 interface Author {
   id: number;
