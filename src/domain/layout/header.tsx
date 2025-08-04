@@ -5,7 +5,13 @@ import Logo from '@/shared/icons/logo';
 
 export default function Header() {
   return (
-    <header className="bg-background border-line sticky top-0 z-10 border-b transition-colors duration-(--animation-duration-toggle-theme) ease-(--easing-toggle-theme)">
+    <header 
+      className="bg-background border-line sticky top-0 z-10 border-b transition-colors"
+      style={{
+        transitionDuration: 'var(--animation-duration-toggle-theme)',
+        transitionTimingFunction: 'var(--easing-toggle-theme)'
+      }}
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2">
         <Link href="/" className="flex items-center gap-2 space-x-2">
           <Logo />

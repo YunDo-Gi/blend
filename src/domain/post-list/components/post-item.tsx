@@ -12,9 +12,21 @@ export default function PostItem({ date, title }: PostItemProps) {
       {/* Thumbnail placeholder */}
       <div className="relative col-span-2 flex">
         {/* Shadow/Background rectangle */}
-        <div className="bg-foreground aspect-image absolute w-36 opacity-0 transition-all duration-(--animation-duration-toggle-theme) ease-(--easing-toggle-theme) group-hover:translate-x-2 group-hover:opacity-100"></div>
+        <div 
+          className="bg-foreground aspect-image absolute w-36 opacity-0 transition-all group-hover:translate-x-2 group-hover:opacity-100"
+          style={{
+            transitionDuration: 'var(--animation-duration-toggle-theme)',
+            transitionTimingFunction: 'var(--easing-toggle-theme)'
+          }}
+        ></div>
         {/* Main thumbnail */}
-        <div className="bg-background border-line aspect-image relative flex w-36 items-center justify-center border transition-all duration-(--animation-duration-toggle-theme) ease-(--easing-toggle-theme) group-hover:-translate-y-2 group-hover:transform"></div>
+        <div 
+          className="bg-background border-line aspect-image relative flex w-36 items-center justify-center border transition-all group-hover:-translate-y-2 group-hover:transform"
+          style={{
+            transitionDuration: 'var(--animation-duration-toggle-theme)',
+            transitionTimingFunction: 'var(--easing-toggle-theme)'
+          }}
+        ></div>
       </div>
 
       {/* Title */}
