@@ -1,36 +1,37 @@
 ---
-title: 'MDX 포스팅 시스템 예시'
+title: 'MDX 컴포넌트 테스트'
 date: '2025-01-26'
 autrhor: 'Yuncheol Kwak'
-description: 'next-mdx-remote-client를 활용한 MDX 포스팅 시스템의 예시입니다.'
+description: 'MDX 시스템에서 지원하는 모든 커스텀 컴포넌트를 테스트합니다.'
 thumbnailUrl: ''
 category: '기술'
 tags: ['Next.js', 'MDX', 'React']
 ---
 
-# MDX 포스팅 시스템
+# H1 제목 (커스텀 H1 컴포넌트)
 
-이것은 **next-mdx-remote-client**를 사용한 MDX 포스팅 시스템의 예시입니다.
+이 문서는 MDX 시스템의 모든 커스텀 컴포넌트를 테스트하기 위한 예시입니다.
 
-## 주요 기능
+## H2 제목 (커스텀 H2 컴포넌트)
 
-이 시스템의 주요 기능들을 소개합니다:
+### H3 제목 (커스텀 H3 컴포넌트)
 
-### 1. 문단별 댓글
+#### H4 제목 (커스텀 H4 컴포넌트)
 
-각 문단마다 댓글을 달 수 있습니다. 이 문단에도 댓글을 달아보세요!
+##### H5 제목 (커스텀 H5 컴포넌트)
 
-### 2. 마크다운 지원
+###### H6 제목 (커스텀 H6 컴포넌트)
 
-일반적인 마크다운 문법을 모두 지원합니다:
+## 문단 및 텍스트 스타일
 
-- **굵은 텍스트**
-- _기울임 텍스트_
-- `인라인 코드`
+이것은 일반 문단입니다. **커스텀 Paragraph 컴포넌트**가 사용되며 클릭하면 문단별 댓글 기능이 활성화됩니다.
 
-### 3. 코드 블록
+**굵은 텍스트**, _기울임 텍스트_, 그리고 `인라인 코드`를 포함한 다양한 텍스트 스타일을 지원합니다.
+
+## 코드 블록 테스트
 
 ```javascript
+// 커스텀 CodeBlock 컴포넌트
 const greeting = (name) => {
   return `안녕하세요, ${name}님!`;
 };
@@ -38,22 +39,89 @@ const greeting = (name) => {
 console.log(greeting('개발자'));
 ```
 
-### 4. 인용구
+```python
+# Python 코드 예시
+def hello_world():
+    print("Hello, World!")
+    
+hello_world()
+```
 
-> 이것은 인용구입니다. 중요한 내용을 강조할 때 사용합니다.
+```css
+/* CSS 코드 예시 */
+.custom-style {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 1rem;
+}
+```
 
-### 5. 인터랙티브 컴포넌트
+## 링크 테스트
 
-MDX에서는 React 컴포넌트도 사용할 수 있습니다. 아래는 카운터 버튼 예시입니다:
+[내부 링크 예시](/posts) 및 [외부 링크 예시](https://github.com)를 테스트합니다. 커스텀 Link 컴포넌트가 적용되어 외부 링크는 새 탭에서 열립니다.
+
+## 인용구 테스트
+
+> 이것은 커스텀 Blockquote 컴포넌트입니다. 중요한 내용을 강조할 때 사용하며, 좌측에 테두리와 함께 이탤릭 스타일이 적용됩니다.
+
+## 목록 테스트
+
+### 순서 없는 목록 (커스텀 UnorderedList)
+
+- 첫 번째 항목
+- 두 번째 항목
+  - 중첩된 항목 1
+  - 중첩된 항목 2
+- 세 번째 항목
+
+### 순서 있는 목록 (커스텀 OrderedList)
+
+1. 첫 번째 단계
+2. 두 번째 단계
+3. 세 번째 단계
+   1. 세부 단계 1
+   2. 세부 단계 2
+
+## 테이블 테스트
+
+| 헤더 1 | 헤더 2 | 헤더 3 |
+|--------|--------|--------|
+| 데이터 1 | 데이터 2 | 데이터 3 |
+| 긴 데이터 예시 | 중간 데이터 | 짧은 데이터 |
+| 테스트 | 커스텀 테이블 | 컴포넌트 |
+
+위 테이블은 커스텀 Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell 컴포넌트를 사용합니다.
+
+## 구분선 테스트
+
+---
+
+위의 구분선은 커스텀 HorizontalRule 컴포넌트입니다.
+
+## 이미지 테스트
+
+![테스트 이미지](https://via.placeholder.com/400x200 "커스텀 Image 컴포넌트 테스트")
+
+커스텀 Image 컴포넌트가 적용되어 Next.js Image 최적화와 함께 제목이 캡션으로 표시됩니다.
+
+## 인터랙티브 컴포넌트 테스트
 
 <CounterButton />
 
-## 댓글 기능 테스트
+위의 카운터 버튼은 React 상태를 가진 완전히 인터랙티브한 컴포넌트입니다.
 
-이 문단에서 댓글 기능을 테스트해보세요. 각 문단마다 독립적으로 댓글을 관리할 수 있습니다.
+## 모든 컴포넌트 정리
 
-다음 문단도 별도의 댓글 영역을 가집니다.
+이 문서에서 테스트된 커스텀 컴포넌트들:
 
-## 마무리
+1. **제목 컴포넌트**: H1, H2, H3, H4, H5, H6
+2. **텍스트 컴포넌트**: Paragraph (문단별 댓글 기능), InlineCode
+3. **코드 컴포넌트**: CodeBlock (언어별 syntax highlighting)
+4. **링크 컴포넌트**: Link (내부/외부 링크 구분)
+5. **인용구 컴포넌트**: Blockquote
+6. **목록 컴포넌트**: UnorderedList, OrderedList, ListItem
+7. **테이블 컴포넌트**: Table, TableHead, TableBody, TableRow, TableHeaderCell, TableDataCell
+8. **기타 컴포넌트**: Image, HorizontalRule
+9. **인터랙티브 컴포넌트**: CounterButton
 
-MDX를 활용하면 리치한 컨텐츠를 쉽게 작성할 수 있습니다. 문단별 댓글 기능으로 독자와의 소통도 원활하게 할 수 있습니다.
+모든 컴포넌트가 정상적으로 렌더링되고 스타일이 적용되는지 확인해보세요!

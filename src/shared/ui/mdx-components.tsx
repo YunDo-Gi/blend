@@ -106,9 +106,9 @@ export function CodeBlock({ children, className }: CodeBlockProps) {
   return (
     <div className="mb-6">
       {language && (
-        <div className="bg-line text-foreground border-line border-b px-4 py-2 font-mono text-sm">{language}</div>
+        <div className="text-foreground border-line bg-gray-2 border-b px-4 py-2 font-mono text-sm">{language}</div>
       )}
-      <pre className="bg-line overflow-x-auto p-4 text-sm">
+      <pre className="bg-gray-2 overflow-x-auto p-4 text-sm">
         <code className={className}>{children}</code>
       </pre>
     </div>
@@ -117,7 +117,7 @@ export function CodeBlock({ children, className }: CodeBlockProps) {
 
 // 인라인 코드 컴포넌트
 export function InlineCode({ children }: { children: ReactNode }) {
-  return <code className="bg-line text-foreground rounded px-1.5 py-0.5 font-mono text-sm">{children}</code>;
+  return <code className="text-foreground bg-gray-2 rounded px-1.5 py-0.5 font-mono text-sm">{children}</code>;
 }
 
 // 링크 컴포넌트
