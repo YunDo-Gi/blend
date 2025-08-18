@@ -1,11 +1,13 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 import PageHeader from '@/shared/ui/page-header';
 import PostFilters from '@/domain/post-list/components/post-filters';
 import CategorySidebar from '@/domain/post-list/components/category-sidebar';
 import PostList, { totalPostsCount } from '@/domain/post-list/components/post-list';
-export default function PostPage() {
+
+function PostPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -38,5 +40,13 @@ export default function PostPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PostPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PostPageContent />
+    </Suspense>
   );
 }
