@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Blend is a Next.js 16 developer blog with MDX-based content system. Uses React 19, TypeScript, Tailwind CSS 4, and styled-components.
+Blend is a Next.js 16 developer blog with block-based content system. Uses React 19, TypeScript, Tailwind CSS 4, and styled-components. Backend API at `tteokyi.com`.
 
 ## Commands
 
 ```bash
-npm run dev         # Development server (webpack mode)
+npm run dev         # Development server (Turbopack)
 npm run build       # Production build
 npm run lint        # ESLint
 npm run format      # Prettier format
@@ -22,46 +22,69 @@ npm run format:check # Check formatting
 
 - `src/app/` - Next.js App Router pages
 - `src/domain/` - Feature-based modules (layout, post-detail, post-list, main)
-- `src/shared/` - Shared utilities, UI components, providers, icons
+- `src/shared/` - Shared utilities, UI components, providers, icons, API client
+  - `src/shared/api/` - API client and service functions
+  - `src/shared/types/` - TypeScript types (API responses)
+  - `src/shared/lib/` - Utilities (markdown parser, TOC extraction)
 - `src/styles/` - styled-components registry
-- `content/posts/` - MDX blog posts
 
 ### Path Alias
 
 Use `@/*` for imports from `src/*`:
 ```typescript
-import { mdxComponents } from '@/shared/ui/mdx-components';
+import { postApi } from '@/shared/api';
+import { Post } from '@/shared/types/api';
 ```
 
-### MDX Content System
+### API Integration
 
-Posts are MDX files in `content/posts/` with front matter:
-```yaml
----
-title: "Post Title"
-date: "2025-01-26"
-description: "Description"
-category: "Category"
-tags: ["tag1", "tag2"]
----
+Backend API (Goblox) at `https://tteokyi.com/api/v1/`:
+- `GET/POST /post` - Post CRUD with block-based content
+- `GET/POST /comment` - Block-level comments
+- `GET/POST /category` - Categories
+
+API client in [client.ts](src/shared/api/client.ts) with typed service functions.
+
+### Block-based Content
+
+Posts consist of ordered blocks (LexoRank sorted):
+```typescript
+interface Post {
+  id: string;
+  title: string;
+  blocks: PostBlock[];  // Markdown content per block
+}
+
+interface PostBlock {
+  id: string;
+  content: string;      // Markdown
+  rank_order: string;   // LexoRank for ordering
+}
 ```
 
-MDX processing uses `next-mdx-remote-client` with remark-gfm, rehype-slug, and rehype-highlight plugins. Key file: [mdx.ts](src/shared/lib/mdx.ts).
+Each block is rendered via [BlockRenderer](src/shared/ui/block-renderer.tsx) which parses markdown to HTML.
 
 ### Styling
 
 - Tailwind CSS 4 with `@theme` directive for design tokens
 - styled-components for dynamic styles (SSR registry in [registry.tsx](src/styles/registry.tsx))
-- CSS variables for theming: `--color-background`, `--color-foreground`, `--color-primary`, `--color-line`, etc.
+- CSS variables: `--color-background`, `--color-foreground`, `--color-primary`, `--color-line`
 - Dark mode via `.dark` class with theme toggle (700ms transition)
+- Prose styles in `globals.css` (`.prose-custom`)
 
 ### SVG Handling
 
-SVGs are imported as React components via `@svgr/webpack`. Type declarations in `svgr.d.ts`.
+SVGs imported as React components via Turbopack loader. Type declarations in `svgr.d.ts`.
 
 ## Key Patterns
 
 - Server Components by default; `'use client'` only when needed
-- Domain-driven organization: each feature in `src/domain/{feature}/components/`
-- Comments stored in localStorage (paragraph-based comment system)
+- Domain-driven organization: `src/domain/{feature}/components/`
+- Block-level comments via API (guest nickname + password for non-members)
 - Geist font family via `next/font`
+
+## Environment Variables
+
+```bash
+NEXT_PUBLIC_API_URL=https://tteokyi.com  # API base URL
+```
