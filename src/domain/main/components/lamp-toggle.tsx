@@ -23,11 +23,9 @@ export default function ClickableLampIcon() {
         >
           <LampIcon className={`h-fit w-32 p-0`} />
           <div
-            className="from-primary relative h-4 w-12 bg-gradient-to-b to-transparent opacity-0 transition-opacity delay-300"
-            style={{ 
+            className="from-primary relative h-4 w-12 bg-gradient-to-b to-transparent opacity-0"
+            style={{
               clipPath: 'polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%)',
-              transitionDuration: 'var(--animation-duration-toggle-theme)',
-              transitionTimingFunction: 'var(--easing-toggle-theme)'
             }}
           ></div>
         </button>
@@ -44,11 +42,9 @@ export default function ClickableLampIcon() {
       >
         <LampIcon className={`h-fit w-32 p-0`} />
         <div
-          className={`from-primary relative h-4 w-12 bg-gradient-to-b to-transparent ${theme === 'dark' ? 'opacity-50' : 'opacity-0'} transition-opacity delay-300`}
-          style={{ 
+          className={`from-primary relative h-4 w-12 bg-gradient-to-b to-transparent ${theme === 'dark' ? 'opacity-50' : 'opacity-0'}`}
+          style={{
             clipPath: 'polygon(25% 0%, 75% 0%, 100% 100%, 0% 100%)',
-            transitionDuration: 'var(--animation-duration-toggle-theme)',
-            transitionTimingFunction: 'var(--easing-toggle-theme)'
           }}
         ></div>
       </button>

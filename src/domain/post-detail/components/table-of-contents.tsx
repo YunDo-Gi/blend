@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TocItem } from '@/shared/lib/mdx';
+import { TocItem } from '@/shared/lib/toc';
 import SectionHeader from '@/shared/ui/section-header';
 
 interface TableOfContentsProps {

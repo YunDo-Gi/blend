@@ -19,9 +19,8 @@
   --color-gray-2: #e4e4e1;
 
   --layout-grid-padding: 1rem;
-
-  --animation-duration-toggle-theme: 700ms;
-  --easing-toggle-theme: ease-in-out;
+  --animation-duration-toggle-theme: 0ms;
+  --easing-toggle-theme: linear;
 
   /* Font families */
   --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
@@ -90,7 +89,8 @@ button:disabled {
 
 /* TOC 스타일 */
 .toc-item {
-  @apply block w-full text-left text-sm transition-colors duration-200;
+  /* Removed duration-200 to inherit global theme transition speed for colors */
+  @apply block w-full text-left text-sm;
   color: var(--color-gray);
 }
 
@@ -120,4 +120,114 @@ button:disabled {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-gray-foreground);
+}
+
+/* Prose 스타일 (API 블록 렌더링용) */
+.prose-custom {
+  color: var(--color-foreground);
+  line-height: 1.75;
+}
+
+.prose-custom h1 {
+  @apply mt-12 mb-6 pb-4 text-4xl font-bold leading-tight;
+  color: var(--color-foreground);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.prose-custom h2 {
+  @apply mt-10 mb-4 text-2xl font-semibold;
+  color: var(--color-foreground);
+}
+
+.prose-custom h3 {
+  @apply mt-8 mb-3 text-xl font-medium;
+  color: var(--color-foreground);
+}
+
+.prose-custom h4 {
+  @apply mt-6 mb-3 text-lg font-medium;
+  color: var(--color-foreground);
+}
+
+.prose-custom h5,
+.prose-custom h6 {
+  @apply mt-4 mb-2 text-base font-medium;
+  color: var(--color-foreground);
+}
+
+.prose-custom p {
+  @apply mb-4 leading-relaxed;
+}
+
+.prose-custom a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.prose-custom a:hover {
+  opacity: 0.8;
+}
+
+.prose-custom code:not(pre code) {
+  @apply rounded px-1.5 py-0.5 font-mono text-sm;
+  background-color: var(--color-gray-2);
+  color: var(--color-foreground);
+}
+
+.prose-custom pre {
+  @apply mb-6 overflow-x-auto rounded-lg p-4;
+  background-color: #1f2937;
+}
+
+.prose-custom blockquote {
+  @apply mb-6 pl-4 italic;
+  border-left: 4px solid var(--color-line);
+}
+
+.prose-custom ul {
+  @apply mb-4 ml-6 list-disc space-y-1;
+}
+
+.prose-custom ol {
+  @apply mb-4 ml-6 list-decimal space-y-1;
+}
+
+.prose-custom li {
+  @apply leading-relaxed;
+  color: var(--color-foreground);
+}
+
+.prose-custom table {
+  @apply mb-6 w-full border-collapse;
+  border: 1px solid var(--color-line);
+}
+
+.prose-custom thead {
+  background-color: var(--color-gray-light);
+}
+
+.prose-custom th,
+.prose-custom td {
+  @apply px-4 py-3 text-left;
+  border: 1px solid var(--color-line);
+  color: var(--color-foreground);
+}
+
+.prose-custom th {
+  @apply font-semibold;
+}
+
+.prose-custom tr:hover {
+  background-color: var(--color-gray-light);
+  opacity: 0.5;
+}
+
+.prose-custom hr {
+  @apply my-8;
+  border-color: var(--color-line);
+}
+
+.prose-custom img {
+  @apply w-full rounded;
+  border: 1px solid var(--color-line);
 }

@@ -1,11 +1,17 @@
+import Link from 'next/link';
+
 interface PostItemProps {
+  id: string;
   date: string;
   title: string;
 }
 
-export default function PostItem({ date, title }: PostItemProps) {
+export default function PostItem({ id, date, title }: PostItemProps) {
   return (
-    <div className="border-line hover:bg-primary/50 group grid cursor-pointer grid-cols-12 gap-4 border-b py-4 transition-colors">
+    <Link
+      href={`/posts/${id}`}
+      className="border-line hover:bg-primary/50 group grid cursor-pointer grid-cols-12 gap-4 border-b py-4 transition-colors"
+    >
       {/* Date */}
       <div className="text-foreground col-span-2 flex items-center font-mono text-sm">{date}</div>
 
@@ -31,6 +37,6 @@ export default function PostItem({ date, title }: PostItemProps) {
 
       {/* Title */}
       <div className="text-foreground col-span-8 text-2xl">{title}</div>
-    </div>
+    </Link>
   );
 }

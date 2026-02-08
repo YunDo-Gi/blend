@@ -30,11 +30,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
-        style={{
-          transitionProperty: 'color, background-color, border-color',
-          transitionDuration: 'var(--animation-duration-toggle-theme)',
-          transitionTimingFunction: 'var(--easing-toggle-theme)'
-        }}
       >
         <StyledComponentsRegistry>
           <ThemeProvider attribute="class">

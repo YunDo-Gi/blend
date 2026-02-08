@@ -1,6 +1,9 @@
 import { notFound } from 'next/navigation';
-import { getMDXContent, PostData } from '@/shared/lib/mdx';
+import { postApi } from '@/shared/api';
+import { Post } from '@/shared/types/api';
+import { extractTocFromBlocks } from '@/shared/lib/toc';
 import PostHeader from '@/domain/post-detail/components/post-header';
+import PostContent from '@/domain/post-detail/components/post-content';
 import CommentsSection from '@/domain/post-detail/components/comments-section';
 import TableOfContents from '@/domain/post-detail/components/table-of-contents';
 
@@ -8,9 +11,9 @@ interface PostPageProps {
   params: Promise<{ slug: string }>;
 }
 
-async function getPostData(slug: string): Promise<PostData | null> {
+async function getPost(id: string): Promise<Post | null> {
   try {
-    return await getMDXContent(slug);
+    return await postApi.getById(id);
   } catch {
     return null;
   }
@@ -18,24 +21,27 @@ async function getPostData(slug: string): Promise<PostData | null> {
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const postData = await getPostData(slug);
+  const post = await getPost(slug);
 
-  if (!postData) {
+  if (!post) {
     notFound();
   }
 
-  const { mdxSource, metadata, toc } = postData;
+  const sortedBlocks = [...post.blocks].sort((a, b) =>
+    a.rank_order.localeCompare(b.rank_order)
+  );
+  const toc = extractTocFromBlocks(sortedBlocks);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="flex justify-center gap-8">
         {/* 메인 컨텐츠 */}
         <div className="max-w-2xl flex-1">
-          <PostHeader metadata={metadata} />
+          <PostHeader post={post} />
 
-          <article>{mdxSource}</article>
+          <PostContent blocks={sortedBlocks} postId={post.id} />
 
-          <CommentsSection postSlug={slug} />
+          <CommentsSection postId={post.id} />
         </div>
 
         {/* TOC 사이드바 */}
@@ -47,22 +53,20 @@ export default async function PostPage({ params }: PostPageProps) {
 
 export async function generateMetadata({ params }: PostPageProps) {
   const { slug } = await params;
-  const postData = await getPostData(slug);
+  const post = await getPost(slug);
 
-  if (!postData) {
+  if (!post) {
     return {
       title: 'Post Not Found',
     };
   }
 
-  const { metadata } = postData;
-
   return {
-    title: metadata.title,
-    description: metadata.description,
+    title: post.title,
+    description: `${post.title} - ${post.category}`,
     openGraph: {
-      title: metadata.title,
-      description: metadata.description,
+      title: post.title,
+      description: `${post.title} - ${post.category}`,
       type: 'article',
     },
   };

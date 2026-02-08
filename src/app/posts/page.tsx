@@ -1,15 +1,17 @@
 'use client';
 
+import { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import PageHeader from '@/shared/ui/page-header';
 import PostFilters from '@/domain/post-list/components/post-filters';
 import CategorySidebar from '@/domain/post-list/components/category-sidebar';
-import PostList, { totalPostsCount } from '@/domain/post-list/components/post-list';
+import PostList from '@/domain/post-list/components/post-list';
 
 function PostPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [totalCount, setTotalCount] = useState(0);
 
   const handleCategoryChange = (category: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -27,7 +29,7 @@ function PostPageContent() {
 
   return (
     <div className="bg-background mx-auto min-h-screen max-w-7xl">
-      <PageHeader count={totalPostsCount} />
+      <PageHeader count={totalCount} />
 
       <div className="flex">
         <CategorySidebar onCategoryChangeAction={handleCategoryChange} />
@@ -35,7 +37,7 @@ function PostPageContent() {
         <div className="flex-1">
           <div className="p-4">
             <PostFilters />
-            <PostList />
+            <PostList onTotalCountChange={setTotalCount} />
           </div>
         </div>
       </div>
