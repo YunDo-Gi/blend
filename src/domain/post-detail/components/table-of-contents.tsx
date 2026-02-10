@@ -14,11 +14,14 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
 
   useEffect(() => {
     const handleScroll = () => {
-      const headings = toc.map((item) => document.getElementById(item.id)).filter(Boolean);
+      const headings = toc
+        .map((item) => document.getElementById(item.id))
+        .filter((el): el is HTMLElement => el !== null);
 
       let current = '';
       for (const heading of headings) {
-        if (heading && heading.offsetTop <= window.scrollY + 100) {
+        const rect = heading.getBoundingClientRect();
+        if (rect.top <= 100) {
           current = heading.id;
         }
       }
@@ -27,17 +30,18 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // 초기 실행
     return () => window.removeEventListener('scroll', handleScroll);
   }, [toc]);
 
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const elementPosition = element.offsetTop;
-      const offsetPosition = elementPosition - 80; // 80px 오프셋
+      const rect = element.getBoundingClientRect();
+      const scrollTop = window.scrollY + rect.top - 80;
 
       window.scrollTo({
-        top: offsetPosition,
+        top: scrollTop,
         behavior: 'smooth',
       });
     }
