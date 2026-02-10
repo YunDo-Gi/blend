@@ -49,7 +49,7 @@ export default function Home() {
       {/* row 4 - FlipBoard (md and up) */}
       <div className="border-line hidden border-b md:block">
         <div className="border-line mx-auto grid max-w-7xl grid-cols-12 gap-0 border-x">
-          <div className="border-line col-span-12 border-r p-(--layout-grid-padding)">
+          <div className="border-line col-span-12 p-(--layout-grid-padding)">
             <FlipBoard />
           </div>
         </div>

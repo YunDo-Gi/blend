@@ -51,13 +51,24 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
 
   return (
     <>
-      {/* 모바일 TOC 토글 버튼 */}
+      {/* 모바일 TOC - 현재 헤딩 표시 */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed right-4 bottom-4 z-50 rounded-full bg-blue-500 p-3 text-white shadow-lg hover:bg-blue-600 lg:hidden"
+        className="border-line bg-background fixed bottom-4 left-4 right-4 z-50 flex items-center justify-between border px-4 py-3 lg:hidden"
       >
-        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        <div className="flex items-center gap-2 overflow-hidden">
+          <span className="text-gray font-mono text-xs shrink-0">TOC</span>
+          <span className="text-foreground truncate text-sm">
+            {activeId ? toc.find((item) => item.id === activeId)?.title || '목차' : '목차'}
+          </span>
+        </div>
+        <svg
+          className={`text-gray h-4 w-4 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
         </svg>
       </button>
 
@@ -96,41 +107,18 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
         </div>
       </div>
 
-      {/* 모바일 TOC 오버레이 */}
+      {/* 모바일 TOC 드롭다운 */}
       {isOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="bg-opacity-50 absolute inset-0 bg-black" onClick={() => setIsOpen(false)} />
+        <div className="fixed inset-0 z-40 lg:hidden" onClick={() => setIsOpen(false)}>
           <div
-            className="absolute right-0 bottom-0 left-0 rounded-t-lg p-4 shadow-lg"
-            style={{ backgroundColor: 'var(--color-background)' }}
+            className="border-line bg-background absolute bottom-16 left-4 right-4 border p-4"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="font-semibold" style={{ color: 'var(--color-foreground)' }}>
-                목차
-              </h3>
-              <button
-                onClick={() => setIsOpen(false)}
-                style={{ color: 'var(--color-gray-foreground)' }}
-                className="hover:opacity-80"
-              >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <nav className="custom-scrollbar max-h-64 space-y-2 overflow-y-auto">
+            <nav className="custom-scrollbar max-h-64 space-y-1 overflow-y-auto">
               {toc.map((item, index) => {
                 const isH1 = item.level === 1;
                 const h1Index = toc.slice(0, index + 1).filter((tocItem) => tocItem.level === 1).length;
                 const h1Number = h1Index.toString().padStart(2, '0');
-
-                // 헤딩 레벨별 스타일 클래스
-                const levelClasses = {
-                  1: 'text-sm',
-                  2: 'text-xs',
-                  3: 'text-xs ',
-                };
-                const levelClass = levelClasses[item.level as keyof typeof levelClasses] || 'text-xs text-gray';
 
                 return (
                   <button
@@ -139,7 +127,9 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
                       scrollToHeading(item.id);
                       setIsOpen(false);
                     }}
-                    className={`toc-item ${activeId === item.id ? 'active' : ''} ${levelClass}`}
+                    className={`text-left w-full py-1.5 font-mono text-xs transition-colors ${
+                      activeId === item.id ? 'text-foreground' : 'text-gray hover:text-foreground'
+                    }`}
                     style={{ paddingLeft: `${(item.level - 1) * 12}px` }}
                   >
                     {isH1 ? `${h1Number} ${item.title}` : item.title}
