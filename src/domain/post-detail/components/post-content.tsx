@@ -1,19 +1,13 @@
 'use client';
 
-import { PostBlock } from '@/shared/types/api';
-import BlockRenderer from '@/shared/ui/block-renderer';
+import type { JSONContent } from '@tiptap/react';
+import PostViewer from '@/shared/ui/post-viewer';
 
 interface PostContentProps {
-  blocks: PostBlock[];
+  content: JSONContent;
   postId: string;
 }
 
-export default function PostContent({ blocks, postId }: PostContentProps) {
-  return (
-    <article className="space-y-2">
-      {blocks.map((block) => (
-        <BlockRenderer key={block.id} block={block} postId={postId} />
-      ))}
-    </article>
-  );
+export default function PostContent({ content, postId }: PostContentProps) {
+  return <PostViewer content={content} postId={postId} />;
 }

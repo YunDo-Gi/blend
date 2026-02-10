@@ -73,7 +73,8 @@ button:disabled {
 
 /* 커스텀 코드 블록 스타일 */
 .hljs {
-  @apply rounded-lg bg-gray-900 p-4 text-white;
+  background: transparent !important;
+  padding: 0 !important;
   font-family: var(--font-mono);
   font-size: 14px;
   line-height: 1.5;
@@ -130,7 +131,7 @@ button:disabled {
 }
 
 .prose-custom h1 {
-  @apply mt-12 mb-6 pb-4 text-4xl font-bold leading-tight;
+  @apply mt-12 mb-6 pb-4 text-4xl leading-tight font-bold;
   color: var(--color-foreground);
   border-bottom: 1px solid var(--color-line);
 }
@@ -175,10 +176,7 @@ button:disabled {
   color: var(--color-foreground);
 }
 
-.prose-custom pre {
-  @apply mb-6 overflow-x-auto rounded-lg p-4;
-  background-color: #1f2937;
-}
+/* pre 스타일은 CodeBlock 컴포넌트에서 직접 처리 */
 
 .prose-custom blockquote {
   @apply mb-6 pl-4 italic;
@@ -231,4 +229,54 @@ button:disabled {
 .prose-custom img {
   @apply w-full rounded;
   border: 1px solid var(--color-line);
+}
+
+/* Tiptap 에디터 스타일 */
+.tiptap-editor {
+  @apply min-h-[500px] outline-none;
+}
+
+.tiptap-editor p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--color-gray);
+  pointer-events: none;
+  height: 0;
+}
+
+.tiptap-editor:focus {
+  outline: none;
+}
+
+.tiptap-editor .ProseMirror-focused {
+  outline: none;
+}
+
+/* Tiptap 코드 블록 스타일 */
+.tiptap-editor .code-block-wrapper {
+  @apply relative mb-6;
+}
+
+.tiptap-editor .code-block-wrapper pre {
+  @apply mb-0 overflow-x-auto rounded-lg p-4 pt-10;
+  background-color: #1f2937;
+}
+
+.tiptap-editor .code-block-wrapper pre code {
+  @apply font-mono text-sm;
+  color: #e5e7eb;
+  background: none;
+  padding: 0;
+}
+
+.tiptap-editor pre {
+  @apply mb-6 overflow-x-auto rounded-lg p-4;
+  background-color: #1f2937;
+}
+
+.tiptap-editor pre code {
+  @apply font-mono text-sm;
+  color: #e5e7eb;
+  background: none;
+  padding: 0;
 }

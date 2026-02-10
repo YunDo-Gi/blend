@@ -1,14 +1,9 @@
 // API Response Types (from Swagger definitions)
+import type { JSONContent } from '@tiptap/react';
 
 export interface Category {
   id: string;
   name: string;
-}
-
-export interface PostBlock {
-  id: string;
-  content: string;
-  rank_order: string;
 }
 
 export interface Post {
@@ -18,7 +13,7 @@ export interface Post {
   category: string;
   thumbnail: string;
   created_at: string;
-  blocks: PostBlock[];
+  content: JSONContent;
 }
 
 export interface Comment {
@@ -55,22 +50,15 @@ export interface UpdateCategoryRequest {
 
 export interface CreatePostRequest {
   title: string;
-  content: string;
+  content: JSONContent;
   category_id?: string;
   thumbnail?: string;
   status?: string;
 }
 
-export interface UpdateBlockRequest {
-  id?: string;
-  content?: string;
-  rank_order?: string;
-  type?: string;
-}
-
 export interface UpdatePostRequest {
   title: string;
-  blocks: UpdateBlockRequest[];
+  content: JSONContent;
   category_id?: string;
   thumbnail?: string;
   status?: string;
