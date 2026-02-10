@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { commentApi } from '@/shared/api';
+import { useState, useEffect } from 'react';
 import { Comment } from '@/shared/types/api';
+import { formatTimestamp } from '@/shared/lib/date';
+import { scrollToElement } from '@/shared/lib/scroll';
+import { useComments } from '../hooks/use-comments';
 
 interface CommentsSectionProps {
   postId: string;
@@ -15,28 +17,14 @@ export default function CommentsSection({
   selectedParagraph = null,
   onParagraphSelect = () => {},
 }: CommentsSectionProps) {
-  const [commentsByBlock, setCommentsByBlock] = useState<Record<string, Comment[]>>({});
+  const { commentsByBlock, loading, fetchComments, addComment, deleteComment, getTotalCount } =
+    useComments({ postId });
+
   const [newComment, setNewComment] = useState('');
   const [authorName, setAuthorName] = useState('');
   const [guestPassword, setGuestPassword] = useState('');
   const [currentSelected, setCurrentSelected] = useState<string | null>(selectedParagraph);
   const [mounted, setMounted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const fetchComments = useCallback(async () => {
-    try {
-      const comments = await commentApi.getAll({ post_id: postId });
-      const grouped = comments.reduce<Record<string, Comment[]>>((acc, comment) => {
-        const blockId = comment.block_id || 'general';
-        if (!acc[blockId]) acc[blockId] = [];
-        acc[blockId].push(comment);
-        return acc;
-      }, {});
-      setCommentsByBlock(grouped);
-    } catch (error) {
-      console.error('Failed to fetch comments:', error);
-    }
-  }, [postId]);
 
   useEffect(() => {
     setMounted(true);
@@ -60,61 +48,33 @@ export default function CommentsSection({
     };
   }, [onParagraphSelect]);
 
-  const addComment = async () => {
-    if (!newComment.trim() || !authorName.trim()) return;
+  const handleAddComment = async () => {
+    const success = await addComment({
+      content: newComment,
+      blockId: currentSelected,
+      guestNickname: authorName,
+      guestPassword,
+    });
 
-    setLoading(true);
-    try {
-      await commentApi.create({
-        content: newComment.trim(),
-        post_id: postId,
-        block_id: currentSelected || undefined,
-        guest_nickname: authorName.trim(),
-        guest_password: guestPassword || undefined,
-      });
-
-      await fetchComments();
+    if (success) {
       setNewComment('');
       setAuthorName('');
       setGuestPassword('');
-    } catch (error) {
-      console.error('Failed to create comment:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const deleteComment = async (commentId: string) => {
+  const handleDeleteComment = async (commentId: string) => {
     const password = prompt('비밀번호를 입력하세요:');
     if (!password) return;
 
-    try {
-      await commentApi.delete(commentId, { guest_password: password });
-      await fetchComments();
-    } catch (error) {
-      console.error('Failed to delete comment:', error);
+    const success = await deleteComment(commentId, password);
+    if (!success) {
       alert('삭제에 실패했습니다. 비밀번호를 확인해주세요.');
     }
   };
 
-  const formatTimestamp = (timestamp: string) => {
-    return new Date(timestamp).toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const getTotalCommentCount = () => {
-    return Object.values(commentsByBlock).reduce((total, comments) => total + comments.length, 0);
-  };
-
   const scrollToBlock = (blockId: string) => {
-    const element = document.getElementById(blockId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (scrollToElement(blockId)) {
       setCurrentSelected(blockId);
       onParagraphSelect(blockId);
     }
@@ -129,7 +89,7 @@ export default function CommentsSection({
   return (
     <div className="comments-section mt-12 pt-8" style={{ borderTop: '1px solid var(--color-line)' }}>
       <h2 className="mb-6 text-2xl font-bold" style={{ color: 'var(--color-foreground)' }}>
-        댓글 ({getTotalCommentCount()})
+        댓글 ({getTotalCount()})
       </h2>
 
       {/* 블록 선택 */}
@@ -190,7 +150,7 @@ export default function CommentsSection({
           />
           <div className="flex gap-2">
             <button
-              onClick={addComment}
+              onClick={handleAddComment}
               disabled={!newComment.trim() || !authorName.trim() || loading}
               className="rounded px-4 py-2 text-sm text-white disabled:opacity-50"
               style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-background)' }}
@@ -254,7 +214,7 @@ export default function CommentsSection({
                           {formatTimestamp(comment.created_at)}
                         </span>
                         <button
-                          onClick={() => deleteComment(comment.id)}
+                          onClick={() => handleDeleteComment(comment.id)}
                           className="text-xs text-red-500 hover:text-red-700"
                         >
                           삭제
@@ -271,7 +231,7 @@ export default function CommentsSection({
           ))}
       </div>
 
-      {getTotalCommentCount() === 0 && (
+      {getTotalCount() === 0 && (
         <p className="text-center" style={{ color: 'var(--color-gray)' }}>
           아직 댓글이 없습니다. 첫 댓글을 작성해보세요!
         </p>

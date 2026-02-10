@@ -42,3 +42,17 @@ export function formatRelativeTime(dateString: string): string {
 
   return formatDate(dateString);
 }
+
+/**
+ * 타임스탬프를 한국어 형식으로 포매팅
+ * @param dateString - ISO 날짜 문자열
+ */
+export function formatTimestamp(dateString: string): string {
+  return new Date(dateString).toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
