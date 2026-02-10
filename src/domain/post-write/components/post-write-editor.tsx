@@ -5,17 +5,9 @@ import { useRouter } from 'next/navigation';
 import type { JSONContent } from '@tiptap/react';
 import { categoryApi, postApi, ApiException } from '@/shared/api';
 import { Category } from '@/shared/types/api';
+import { formatSavedTime } from '@/shared/lib/date';
 import { usePostDraft } from '@/domain/post-write/hooks/use-post-draft';
 import TiptapEditor from './tiptap-editor';
-
-function formatSavedTime(timestamp: number | null): string {
-  if (!timestamp) return '저장 대기 중';
-  return `임시저장 ${new Date(timestamp).toLocaleTimeString('ko-KR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  })}`;
-}
 
 function hasContent(node?: JSONContent): boolean {
   if (!node) return false;

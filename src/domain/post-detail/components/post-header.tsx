@@ -1,17 +1,13 @@
 'use client';
 
 import { Post } from '@/shared/types/api';
+import { formatDate } from '@/shared/lib/date';
 
 interface PostHeaderProps {
   post: Post;
 }
 
 export default function PostHeader({ post }: PostHeaderProps) {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
-  };
-
   return (
     <header className="mb-8 flex flex-col pb-8">
       <time className="text-gray-foreground pb-3 font-mono text-sm font-semibold">
