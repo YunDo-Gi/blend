@@ -81,9 +81,12 @@ export default function PostViewer({ content, postId }: PostViewerProps) {
 
     return () => {
       clearTimeout(timeoutId);
-      // cleanup roots
-      rootsRef.current.forEach((root) => root.unmount());
+      // cleanup roots - 비동기로 처리하여 race condition 방지
+      const roots = Array.from(rootsRef.current.values());
       rootsRef.current.clear();
+      setTimeout(() => {
+        roots.forEach((root) => root.unmount());
+      }, 0);
     };
   }, [editor, content, postId]);
 

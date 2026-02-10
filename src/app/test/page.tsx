@@ -1,6 +1,7 @@
 import type { JSONContent } from '@tiptap/react';
 import PostContent from '@/domain/post-detail/components/post-content';
 import TableOfContents from '@/domain/post-detail/components/table-of-contents';
+import CommentsSection from '@/domain/post-detail/components/comments-section';
 import { extractTocFromContent } from '@/shared/lib/toc';
 
 // Tiptap JSON 테스트 데이터
@@ -203,6 +204,8 @@ export default function TestPage() {
           </header>
 
           <PostContent content={testContent} postId="test-post" />
+
+          <CommentsSection postId="test-post" />
         </div>
 
         {/* TOC 사이드바 */}

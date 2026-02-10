@@ -44,7 +44,7 @@ export default function CommentIndicator({
   return (
     <button
       onClick={handleClick}
-      className="comment-indicator absolute right-0 top-0 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-opacity"
+      className="comment-indicator inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs transition-opacity"
       style={{
         backgroundColor: 'var(--color-gray-2)',
         color: 'var(--color-foreground)',

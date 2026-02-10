@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Comment } from '@/shared/types/api';
-import { formatTimestamp } from '@/shared/lib/date';
+import { formatRelativeTime } from '@/shared/lib/date';
 import { scrollToElement } from '@/shared/lib/scroll';
 import { useComments } from '../hooks/use-comments';
 
@@ -87,155 +87,137 @@ export default function CommentsSection({
   if (!mounted) return null;
 
   return (
-    <div className="comments-section mt-12 pt-8" style={{ borderTop: '1px solid var(--color-line)' }}>
-      <h2 className="mb-6 text-2xl font-bold" style={{ color: 'var(--color-foreground)' }}>
-        댓글 ({getTotalCount()})
-      </h2>
+    <section className="comments-section border-line mt-16 border-t pt-12">
+      {/* 헤더 */}
+      <div className="mb-8 flex items-baseline justify-between">
+        <h2 className="text-foreground text-xl font-bold">댓글</h2>
+        <span className="text-gray-foreground font-mono text-sm">{getTotalCount()}개</span>
+      </div>
 
-      {/* 블록 선택 */}
+      {/* 블록 필터 */}
       {Object.keys(commentsByBlock).length > 0 && (
-        <div className="mb-6">
-          <label className="mb-2 block text-sm font-medium" style={{ color: 'var(--color-gray-foreground)' }}>
-            댓글이 있는 블록:
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {Object.keys(commentsByBlock).map((blockId) => (
-              <button
-                key={blockId}
-                onClick={() => scrollToBlock(blockId)}
-                className="rounded-full px-3 py-1 text-sm transition-colors"
-                style={{
-                  backgroundColor: currentSelected === blockId ? 'var(--color-primary)' : 'var(--color-gray-2)',
-                  color: currentSelected === blockId ? 'var(--color-background)' : 'var(--color-foreground)',
-                }}
-              >
-                블록 ({commentsByBlock[blockId]?.length || 0})
-              </button>
-            ))}
-          </div>
+        <div className="mb-8 flex flex-wrap gap-2">
+          <button
+            onClick={() => {
+              setCurrentSelected(null);
+              onParagraphSelect(null);
+            }}
+            className={`border-line text-foreground border px-3 py-1.5 font-mono text-xs transition-colors ${
+              !currentSelected ? 'bg-foreground text-background' : 'hover:bg-gray-2'
+            }`}
+          >
+            전체
+          </button>
+          {Object.keys(commentsByBlock).map((blockId) => (
+            <button
+              key={blockId}
+              onClick={() => scrollToBlock(blockId)}
+              className={`border-line text-foreground border px-3 py-1.5 font-mono text-xs transition-colors ${
+                currentSelected === blockId ? 'bg-foreground text-background' : 'hover:bg-gray-2'
+              }`}
+            >
+              #{blockId.slice(-4)} ({commentsByBlock[blockId]?.length || 0})
+            </button>
+          ))}
         </div>
       )}
 
       {/* 댓글 작성 폼 */}
-      <div className="mb-8 rounded-lg p-4" style={{ backgroundColor: 'var(--color-gray-2)' }}>
-        <h3 className="mb-4 font-medium" style={{ color: 'var(--color-foreground)' }}>
-          {currentSelected ? '선택한 블록에 댓글 작성' : '댓글 작성'}
-        </h3>
-        <div className="space-y-3">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="닉네임"
-              value={authorName}
-              onChange={(e) => setAuthorName(e.target.value)}
-              className="flex-1 rounded border px-3 py-2 text-sm focus:outline-none"
-              style={{ borderColor: 'var(--color-line)', backgroundColor: 'var(--color-background)' }}
-            />
-            <input
-              type="password"
-              placeholder="비밀번호 (삭제 시 필요)"
-              value={guestPassword}
-              onChange={(e) => setGuestPassword(e.target.value)}
-              className="flex-1 rounded border px-3 py-2 text-sm focus:outline-none"
-              style={{ borderColor: 'var(--color-line)', backgroundColor: 'var(--color-background)' }}
-            />
-          </div>
-          <textarea
-            placeholder="댓글을 입력하세요..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            rows={3}
-            className="w-full rounded border px-3 py-2 text-sm focus:outline-none"
-            style={{ borderColor: 'var(--color-line)', backgroundColor: 'var(--color-background)' }}
-          />
-          <div className="flex gap-2">
+      <div className="border-line mb-10 border p-5">
+        {currentSelected && (
+          <div className="text-gray-foreground mb-4 flex items-center justify-between font-mono text-xs">
+            <span>블록 #{currentSelected.slice(-4)}에 댓글 작성</span>
             <button
-              onClick={handleAddComment}
-              disabled={!newComment.trim() || !authorName.trim() || loading}
-              className="rounded px-4 py-2 text-sm text-white disabled:opacity-50"
-              style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-background)' }}
+              onClick={() => {
+                setCurrentSelected(null);
+                onParagraphSelect(null);
+              }}
+              className="hover:text-foreground underline"
             >
-              {loading ? '작성 중...' : '댓글 작성'}
+              선택 해제
             </button>
-            {currentSelected && (
-              <button
-                onClick={() => {
-                  setCurrentSelected(null);
-                  onParagraphSelect(null);
-                }}
-                className="rounded px-4 py-2 text-sm transition-colors"
-                style={{ backgroundColor: 'var(--color-gray)', color: 'var(--color-foreground)' }}
-              >
-                선택 해제
-              </button>
-            )}
           </div>
+        )}
+
+        <div className="mb-4 grid grid-cols-2 gap-3">
+          <input
+            type="text"
+            placeholder="닉네임"
+            value={authorName}
+            onChange={(e) => setAuthorName(e.target.value)}
+            className="border-line bg-background text-foreground placeholder:text-gray w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+          />
+          <input
+            type="password"
+            placeholder="비밀번호"
+            value={guestPassword}
+            onChange={(e) => setGuestPassword(e.target.value)}
+            className="border-line bg-background text-foreground placeholder:text-gray w-full border px-3 py-2 font-mono text-sm focus:outline-none"
+          />
         </div>
+
+        <textarea
+          placeholder="댓글을 입력하세요..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          rows={4}
+          className="border-line bg-background text-foreground placeholder:text-gray mb-4 w-full resize-none border px-3 py-2 text-sm focus:outline-none"
+        />
+
+        <button
+          onClick={handleAddComment}
+          disabled={!newComment.trim() || !authorName.trim() || loading}
+          className="bg-foreground text-background hover:opacity-90 disabled:opacity-40 px-5 py-2 font-mono text-sm transition-opacity"
+        >
+          {loading ? '작성 중...' : '작성'}
+        </button>
       </div>
 
-      {/* 모든 댓글 표시 */}
-      <div className="space-y-6">
+      {/* 댓글 목록 */}
+      <div className="space-y-0">
         {Object.entries(commentsByBlock)
           .filter(([, comments]) => comments.length > 0)
-          .map(([blockId, comments]) => (
-            <div
-              key={blockId}
-              className="rounded-lg border p-4"
-              style={{ borderColor: 'var(--color-line)' }}
-            >
-              <div className="mb-3 flex items-center justify-between">
-                <h3 className="font-medium" style={{ color: 'var(--color-foreground)' }}>
-                  {blockId === 'general' ? '전체 댓글' : '블록 댓글'}
-                </h3>
-                {blockId !== 'general' && (
+          .flatMap(([blockId, comments]) =>
+            comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="border-line group border-b py-5 first:border-t"
+              >
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="text-foreground text-sm font-medium">
+                    {getDisplayName(comment)}
+                  </span>
+                  <span className="text-gray font-mono text-xs">
+                    {formatRelativeTime(comment.created_at)}
+                  </span>
+                  {blockId !== 'general' && (
+                    <button
+                      onClick={() => scrollToBlock(blockId)}
+                      className="text-gray hover:text-foreground font-mono text-xs"
+                    >
+                      #{blockId.slice(-4)}
+                    </button>
+                  )}
                   <button
-                    onClick={() => scrollToBlock(blockId)}
-                    className="text-sm hover:opacity-80"
-                    style={{ color: 'var(--color-primary)' }}
+                    onClick={() => handleDeleteComment(comment.id)}
+                    className="text-gray hover:text-foreground ml-auto font-mono text-xs opacity-0 transition-opacity group-hover:opacity-100"
                   >
-                    블록 보기
+                    삭제
                   </button>
-                )}
+                </div>
+                <p className="text-foreground text-sm leading-relaxed">
+                  {comment.content}
+                </p>
               </div>
-
-              <div className="space-y-3">
-                {comments.map((comment) => (
-                  <div
-                    key={comment.id}
-                    className="rounded p-3"
-                    style={{ backgroundColor: 'var(--color-gray-2)' }}
-                  >
-                    <div className="mb-2 flex items-center justify-between">
-                      <span className="font-medium" style={{ color: 'var(--color-foreground)' }}>
-                        {getDisplayName(comment)}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs" style={{ color: 'var(--color-gray)' }}>
-                          {formatTimestamp(comment.created_at)}
-                        </span>
-                        <button
-                          onClick={() => handleDeleteComment(comment.id)}
-                          className="text-xs text-red-500 hover:text-red-700"
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    </div>
-                    <p className="text-sm" style={{ color: 'var(--color-foreground)' }}>
-                      {comment.content}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+            ))
+          )}
       </div>
 
       {getTotalCount() === 0 && (
-        <p className="text-center" style={{ color: 'var(--color-gray)' }}>
-          아직 댓글이 없습니다. 첫 댓글을 작성해보세요!
+        <p className="text-gray py-12 text-center text-sm">
+          아직 댓글이 없습니다.
         </p>
       )}
-    </div>
+    </section>
   );
 }
