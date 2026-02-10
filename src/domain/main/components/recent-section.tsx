@@ -27,10 +27,10 @@ export default function RecentSection() {
     <>
       <SectionHeader title="/ RECENT" />
 
-      <div className="group flex cursor-pointer gap-8 pb-(--layout-grid-padding)">
-        <div className="border-foreground aspect-image group-hover:border-primary w-72 border"></div>
+      <div className="group flex cursor-pointer flex-col gap-4 pb-(--layout-grid-padding) lg:flex-row lg:gap-8">
+        <div className="border-foreground aspect-image group-hover:border-primary w-full shrink-0 border lg:w-72"></div>
 
-        <div className="flex flex-1 flex-col content-between justify-between">
+        <div className="flex flex-1 flex-col content-between justify-between gap-3 lg:gap-0">
           <h3 className="text-lg leading-relaxed font-medium">{currentPost.title}</h3>
 
           <p className="text-gray-foreground text-xs leading-relaxed">{currentPost.content}</p>
