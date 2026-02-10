@@ -1,57 +1,15 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent, Extension } from '@tiptap/react';
+import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
-import { v4 as uuidv4 } from 'uuid';
+import { EditableBlockIdExtension } from '@/shared/lib/tiptap-extensions';
 import CodeBlockComponent from './code-block-component';
 
 const lowlight = createLowlight(common);
-
-// 블록 노드에 고유 ID를 부여하는 확장
-const UniqueID = Extension.create({
-  name: 'uniqueID',
-
-  addGlobalAttributes() {
-    return [
-      {
-        types: ['paragraph', 'heading', 'codeBlock', 'blockquote', 'bulletList', 'orderedList', 'horizontalRule'],
-        attributes: {
-          id: {
-            default: null,
-            parseHTML: (element) => element.getAttribute('data-id'),
-            renderHTML: (attributes) => {
-              if (!attributes.id) {
-                return { 'data-id': uuidv4() };
-              }
-              return { 'data-id': attributes.id };
-            },
-          },
-        },
-      },
-    ];
-  },
-
-  onCreate() {
-    // 에디터 생성 시 ID가 없는 노드에 ID 부여
-    const { tr } = this.editor.state;
-    let modified = false;
-
-    this.editor.state.doc.descendants((node, pos) => {
-      if (node.type.spec.group === 'block' && !node.attrs.id) {
-        tr.setNodeMarkup(pos, undefined, { ...node.attrs, id: uuidv4() });
-        modified = true;
-      }
-    });
-
-    if (modified) {
-      this.editor.view.dispatch(tr);
-    }
-  },
-});
 
 interface TiptapEditorProps {
   content?: JSONContent;
@@ -105,7 +63,7 @@ export default function TiptapEditor({
       }).configure({
         lowlight,
       }),
-      UniqueID,
+      EditableBlockIdExtension,
     ],
     content,
     immediatelyRender: false,

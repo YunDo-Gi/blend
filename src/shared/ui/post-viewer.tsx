@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useEditor, EditorContent, JSONContent, Extension } from '@tiptap/react';
+import { useEditor, EditorContent, JSONContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
+import { BlockIdExtension } from '@/shared/lib/tiptap-extensions';
 import CommentIndicator from '@/domain/post-detail/components/comment-indicator';
 import { createRoot, Root } from 'react-dom/client';
 
@@ -14,32 +15,6 @@ interface PostViewerProps {
   content: JSONContent;
   postId: string;
 }
-
-// 모든 블록 타입에 id 속성을 렌더링하는 확장
-const BlockIdExtension = Extension.create({
-  name: 'blockId',
-
-  addGlobalAttributes() {
-    return [
-      {
-        types: ['paragraph', 'heading', 'codeBlock', 'blockquote', 'bulletList', 'orderedList', 'horizontalRule'],
-        attributes: {
-          id: {
-            default: null,
-            renderHTML: (attributes) => {
-              if (!attributes.id) return {};
-              return {
-                id: attributes.id,
-                'data-block-id': attributes.id,
-                class: 'block-with-comment',
-              };
-            },
-          },
-        },
-      },
-    ];
-  },
-});
 
 // content에서 최상위 블록 ID 추출
 function extractBlockIds(content: JSONContent): string[] {
