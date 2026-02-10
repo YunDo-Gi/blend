@@ -5,6 +5,8 @@
 :root {
   --background: #f8f8f5;
   --foreground: #1f1f1e;
+  --code-block-bg: #f7f7f5;
+  --code-block-border: #e6e6e2;
 }
 
 @theme {
@@ -42,6 +44,8 @@
   --color-gray-foreground: #cfcfcc;
   --color-gray-light: #3e3e3d;
   --color-gray-2: #3a3a38;
+  --code-block-bg: #2b2d31;
+  --code-block-border: #3d4148;
 }
 
 body {
@@ -176,7 +180,17 @@ button:disabled {
   color: var(--color-foreground);
 }
 
-/* pre 스타일은 CodeBlock 컴포넌트에서 직접 처리 */
+.prose-custom pre {
+  @apply mb-6 overflow-x-auto rounded-lg p-4;
+  background-color: var(--code-block-bg);
+  border: 1px solid var(--code-block-border);
+}
+
+.prose-custom pre code {
+  @apply font-mono text-sm;
+  background: none;
+  padding: 0;
+}
 
 .prose-custom blockquote {
   @apply mb-6 pl-4 italic;
@@ -258,25 +272,5 @@ button:disabled {
 }
 
 .tiptap-editor .code-block-wrapper pre {
-  @apply mb-0 overflow-x-auto rounded-lg p-4 pt-10;
-  background-color: #1f2937;
-}
-
-.tiptap-editor .code-block-wrapper pre code {
-  @apply font-mono text-sm;
-  color: #e5e7eb;
-  background: none;
-  padding: 0;
-}
-
-.tiptap-editor pre {
-  @apply mb-6 overflow-x-auto rounded-lg p-4;
-  background-color: #1f2937;
-}
-
-.tiptap-editor pre code {
-  @apply font-mono text-sm;
-  color: #e5e7eb;
-  background: none;
-  padding: 0;
+  @apply mb-0 pt-10;
 }

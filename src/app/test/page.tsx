@@ -99,9 +99,7 @@ const testContent: JSONContent = {
       content: [
         {
           type: 'paragraph',
-          content: [
-            { type: 'text', text: '이것은 인용문입니다. 여러 줄에 걸쳐 작성할 수 있습니다. — 작성자' },
-          ],
+          content: [{ type: 'text', text: '이것은 인용문입니다. 여러 줄에 걸쳐 작성할 수 있습니다. — 작성자' }],
         },
       ],
     },
@@ -199,15 +197,9 @@ export default function TestPage() {
         {/* 메인 컨텐츠 */}
         <div className="max-w-2xl flex-1">
           <header className="mb-8 flex flex-col pb-8">
-            <time className="text-gray-foreground pb-3 font-mono text-sm font-semibold">
-              2025.01.26
-            </time>
-            <h1 className="text-foreground mb-4 text-5xl font-bold">
-              Tiptap JSON 기반 렌더링 테스트
-            </h1>
-            <p className="text-gray-foreground">
-              Tiptap JSON 구조로 렌더링을 테스트하는 페이지입니다.
-            </p>
+            <time className="text-gray-foreground pb-3 font-mono text-sm font-semibold">2025.01.26</time>
+            <h1 className="text-foreground mb-4 text-5xl font-bold">Tiptap JSON 기반 렌더링 테스트</h1>
+            <p className="text-gray-foreground">Tiptap JSON 구조로 렌더링을 테스트하는 페이지입니다.</p>
           </header>
 
           <PostContent content={testContent} postId="test-post" />
