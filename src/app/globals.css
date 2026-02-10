@@ -85,8 +85,15 @@ button:disabled {
 }
 
 /* 문단 호버 효과 */
-.paragraph-hover:hover .comment-indicator {
+.block-with-comment:hover .comment-indicator {
   @apply opacity-100;
+}
+
+.comment-indicator-wrapper {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
 }
 
 .comment-indicator {
