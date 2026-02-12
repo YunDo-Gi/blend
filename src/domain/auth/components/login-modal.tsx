@@ -90,13 +90,13 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
       <div className="fixed inset-0 z-40 bg-black/50" onClick={onClose} />
 
       {/* Modal */}
-      <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2">
+      <div className="fixed top-1/2 left-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2">
         <div className="border-line bg-background border p-6">
-          <h2 className="text-foreground mb-6 font-mono text-lg">로그인</h2>
+          <h2 className="text-foreground mb-6 font-mono text-lg">LOGIN</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-gray-foreground mb-2 block font-mono text-xs">이메일</label>
+              <label className="text-gray-foreground mb-2 block font-mono text-xs">Email</label>
               <input
                 ref={emailInputRef}
                 type="email"
@@ -109,7 +109,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
             </div>
 
             <div>
-              <label className="text-gray-foreground mb-2 block font-mono text-xs">비밀번호</label>
+              <label className="text-gray-foreground mb-2 block font-mono text-xs">Password</label>
               <input
                 type="password"
                 value={password}
@@ -130,9 +130,9 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-foreground text-background hover:opacity-90 flex-1 px-4 py-2 font-mono text-sm transition-opacity disabled:opacity-40"
+                className="bg-foreground text-background flex-1 px-4 py-2 font-mono text-sm transition-opacity hover:opacity-90 disabled:opacity-40"
               >
-                {isSubmitting ? '로그인 중...' : '로그인'}
+                {isSubmitting ? 'LOGGING IN...' : 'LOGIN'}
               </button>
               <button
                 type="button"
@@ -140,7 +140,7 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 disabled={isSubmitting}
                 className="border-line text-foreground hover:bg-gray-2 flex-1 border px-4 py-2 font-mono text-sm transition-colors disabled:opacity-40"
               >
-                취소
+                CANCEL
               </button>
             </div>
           </form>

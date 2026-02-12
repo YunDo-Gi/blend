@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Logo from '@/shared/icons/logo';
 import { UserMenu } from '@/domain/auth/components/user-menu';
+import { ThemeToggle } from './components/theme-toggle';
 
 export default function Header() {
   return (
@@ -11,7 +12,10 @@ export default function Header() {
         <Link href="/" className="flex items-center gap-2 space-x-2">
           <Logo />
         </Link>
-        <UserMenu />
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <UserMenu />
+        </div>
       </div>
     </header>
   );
