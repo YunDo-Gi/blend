@@ -54,10 +54,10 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
       {/* 모바일 TOC - 현재 헤딩 표시 */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="border-line bg-background fixed bottom-4 left-4 right-4 z-50 flex items-center justify-between border px-4 py-3 lg:hidden"
+        className="border-line bg-background fixed right-4 bottom-4 left-4 z-50 flex items-center justify-between border px-4 py-3 lg:hidden"
       >
         <div className="flex items-center gap-2 overflow-hidden">
-          <span className="text-gray font-mono text-xs shrink-0">TOC</span>
+          <span className="text-gray shrink-0 font-mono text-xs">TOC</span>
           <span className="text-foreground truncate text-sm">
             {activeId ? toc.find((item) => item.id === activeId)?.title || '목차' : '목차'}
           </span>
@@ -95,7 +95,7 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
                   <button
                     key={item.id}
                     onClick={() => scrollToHeading(item.id)}
-                    className={`toc-item ${activeId === item.id ? 'active' : ''} font-mono ${levelClass}`}
+                    className={`toc-item ${activeId === item.id ? 'active' : ''} ${levelClass}`}
                     style={{ paddingLeft: `${(item.level - 1) * 12}px` }}
                   >
                     {isH1 ? `${h1Number} ${item.title}` : item.title}
@@ -111,7 +111,7 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
       {isOpen && (
         <div className="fixed inset-0 z-40 lg:hidden" onClick={() => setIsOpen(false)}>
           <div
-            className="border-line bg-background absolute bottom-16 left-4 right-4 border p-4"
+            className="border-line bg-background absolute right-4 bottom-16 left-4 border p-4"
             onClick={(e) => e.stopPropagation()}
           >
             <nav className="custom-scrollbar max-h-64 space-y-1 overflow-y-auto">
@@ -127,7 +127,7 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
                       scrollToHeading(item.id);
                       setIsOpen(false);
                     }}
-                    className={`text-left w-full py-1.5 font-mono text-xs transition-colors ${
+                    className={`w-full py-1.5 text-left font-mono text-xs transition-colors ${
                       activeId === item.id ? 'text-foreground' : 'text-gray hover:text-foreground'
                     }`}
                     style={{ paddingLeft: `${(item.level - 1) * 12}px` }}

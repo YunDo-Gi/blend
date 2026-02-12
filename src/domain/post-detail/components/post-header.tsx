@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Post } from '@/shared/types/api';
 import { formatDate } from '@/shared/lib/date';
 
@@ -9,26 +10,37 @@ interface PostHeaderProps {
 
 export default function PostHeader({ post }: PostHeaderProps) {
   return (
-    <header className="mb-8 flex flex-col pb-8">
-      <time className="text-gray-foreground pb-3 font-mono text-sm font-semibold">
-        {formatDate(post.created_at)}
-      </time>
+    <header className="flex flex-col pb-10">
+      {/* Category & Date */}
+      <div className="text-gray-foreground mb-4 flex items-center gap-2 font-mono text-sm font-medium">
+        {post.category && (
+          <>
+            <span className="text-foreground">{post.category}</span>
+            <span>·</span>
+          </>
+        )}
+        <time className="font-mono">{formatDate(post.created_at)}</time>
+      </div>
 
-      <h1 className="text-foreground mb-4 text-5xl font-bold">{post.title}</h1>
+      {/* Title */}
+      <h1 className="text-foreground mb-6 text-4xl leading-tight font-bold md:text-5xl">{post.title}</h1>
 
-      {post.thumbnail ? (
-        <img
-          src={post.thumbnail}
-          alt={post.title}
-          className="aspect-video w-full rounded border border-line object-cover"
-        />
-      ) : (
-        <div className="border-foreground aspect-video w-full border"></div>
-      )}
+      {/* Author */}
+      <div className="text-gray-foreground flex items-center gap-2 font-mono text-sm">
+        <span>BY {post.author}</span>
+      </div>
 
-      {post.category && (
-        <div className="mt-4">
-          <span className="text-gray-foreground text-sm">{post.category}</span>
+      {/* Thumbnail */}
+      {post.thumbnail && (
+        <div className="mt-10 w-full">
+          <div className="relative aspect-video w-full overflow-hidden">
+            <Image
+              src={post.thumbnail}
+              alt={post.title}
+              fill
+              className="object-cover grayscale transition-all duration-500 hover:grayscale-0"
+            />
+          </div>
         </div>
       )}
     </header>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist_Mono } from 'next/font/google';
 import './globals.css';
+import '@/styles/highlight-theme.css';
 import { ThemeProvider } from '@/shared/providers/theme-provider';
 import StyledComponentsRegistry from '@/styles/registry';
 import Header from '@/domain/layout/header';
@@ -22,8 +23,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body suppressHydrationWarning className={`${geistMono.variable} bg-background text-foreground antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${geistMono.variable}`}>
+      <body suppressHydrationWarning className="bg-background text-foreground antialiased">
         <StyledComponentsRegistry>
           <ThemeProvider attribute="class">
             <Header />

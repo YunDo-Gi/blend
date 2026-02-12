@@ -258,13 +258,142 @@ const fetchData = async () => {
       ],
     },
   },
+  {
+    id: 'block-22',
+    rank_order: 'v',
+    content: {
+      type: 'heading',
+      attrs: { level: 2 },
+      content: [{ type: 'text', text: '하드 브레이크 / 멀티라인 테스트' }],
+    },
+  },
+  {
+    id: 'block-23',
+    rank_order: 'w',
+    content: {
+      type: 'paragraph',
+      content: [
+        { type: 'text', text: '첫 번째 줄' },
+        { type: 'hardBreak' },
+        { type: 'text', text: '두 번째 줄' },
+        { type: 'hardBreak' },
+        { type: 'text', text: '세 번째 줄' },
+      ],
+    },
+  },
+  {
+    id: 'block-24',
+    rank_order: 'x',
+    content: {
+      type: 'heading',
+      attrs: { level: 2 },
+      content: [{ type: 'text', text: '중첩 리스트 테스트' }],
+    },
+  },
+  {
+    id: 'block-25',
+    rank_order: 'y',
+    content: {
+      type: 'bulletList',
+      content: [
+        {
+          type: 'listItem',
+          content: [
+            { type: 'paragraph', content: [{ type: 'text', text: '상위 항목 1' }] },
+            {
+              type: 'orderedList',
+              content: [
+                {
+                  type: 'listItem',
+                  content: [{ type: 'paragraph', content: [{ type: 'text', text: '하위 순서 항목 1-1' }] }],
+                },
+                {
+                  type: 'listItem',
+                  content: [{ type: 'paragraph', content: [{ type: 'text', text: '하위 순서 항목 1-2' }] }],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'listItem',
+          content: [{ type: 'paragraph', content: [{ type: 'text', text: '상위 항목 2' }] }],
+        },
+      ],
+    },
+  },
+  {
+    id: 'block-26',
+    rank_order: 'z',
+    content: {
+      type: 'heading',
+      attrs: { level: 2 },
+      content: [{ type: 'text', text: '코드 블록 추가 테스트 (bash/json)' }],
+    },
+  },
+  {
+    id: 'block-27',
+    rank_order: 'aa',
+    content: {
+      type: 'codeBlock',
+      attrs: { language: 'bash' },
+      content: [
+        {
+          type: 'text',
+          text: `# bash example
+npm run lint
+npm run build`,
+        },
+      ],
+    },
+  },
+  {
+    id: 'block-28',
+    rank_order: 'ab',
+    content: {
+      type: 'codeBlock',
+      attrs: { language: 'json' },
+      content: [
+        {
+          type: 'text',
+          text: `{
+  "title": "Test Post",
+  "tags": ["tiptap", "json", "render"],
+  "published": true
+}`,
+        },
+      ],
+    },
+  },
+  {
+    id: 'block-29',
+    rank_order: 'ac',
+    content: {
+      type: 'heading',
+      attrs: { level: 2 },
+      content: [{ type: 'text', text: '이미지 테스트' }],
+    },
+  },
+  {
+    id: 'block-30',
+    rank_order: 'ad',
+    content: {
+      type: 'paragraph',
+      content: [
+        {
+          type: 'text',
+          text: '헤더 썸네일에 로컬 SVG 이미지를 설정해 이미지 렌더링까지 함께 테스트합니다.',
+        },
+      ],
+    },
+  },
 ];
 const testPost: Post = {
   id: 'test-post',
   title: 'Tiptap JSON 기반 렌더링 테스트',
-  author: 'test-author',
-  category: 'Test',
-  thumbnail: '',
+  author: 'YUNCHEOL KWAK',
+  category: 'Backend',
+  thumbnail: '/images/lcw-chair.png',
   created_at: '2025-01-26T00:00:00Z',
   blocks: testBlocks,
 };
