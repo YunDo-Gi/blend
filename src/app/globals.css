@@ -57,8 +57,6 @@ body {
   font-family: var(--font-body);
 }
 
-
-
 /* Button cursor styles */
 button:not(:disabled) {
   cursor: pointer;
@@ -132,41 +130,62 @@ button:disabled {
 .prose-custom {
   color: var(--color-foreground);
   font-size: 1rem;
-  line-height: 1.75; /* Relaxed reading experience */
+  line-height: 1.75;
 }
 
-/* Headings */
+/* 요소 간 기본 간격 */
+.prose-custom > * + * {
+  margin-top: 1.25rem;
+}
+
+/* Headings - 섹션 구분을 위해 위쪽 간격 더 크게 */
 .prose-custom h1 {
-  @apply mt-10 mb-6 pb-2 text-3xl font-bold;
+  @apply pb-2 text-3xl font-bold;
   color: var(--color-foreground);
   border-bottom: 1px solid var(--color-line);
 }
 
 .prose-custom h2 {
-  @apply mt-10 mb-4 pb-1 text-2xl font-semibold;
+  @apply pb-1 text-2xl font-semibold;
   color: var(--color-foreground);
-  border-bottom: 1px solid var(--color-line); /* Optional: common in documentation */
+  border-bottom: 1px solid var(--color-line);
 }
 
 .prose-custom h3 {
-  @apply mt-8 mb-3 text-xl font-semibold;
+  @apply text-xl font-semibold;
   color: var(--color-foreground);
 }
 
 .prose-custom h4 {
-  @apply mt-6 mb-2 text-lg font-semibold;
+  @apply text-lg font-semibold;
   color: var(--color-foreground);
 }
 
 .prose-custom h5,
 .prose-custom h6 {
-  @apply mt-4 mb-2 text-base font-semibold;
+  @apply text-base font-semibold;
   color: var(--color-foreground);
+}
+
+/* 헤딩 위쪽 간격 */
+.prose-custom > * + h1,
+.prose-custom > * + h2 {
+  margin-top: 2.5rem;
+}
+
+.prose-custom > * + h3 {
+  margin-top: 2rem;
+}
+
+.prose-custom > * + h4,
+.prose-custom > * + h5,
+.prose-custom > * + h6 {
+  margin-top: 1.5rem;
 }
 
 /* Body Text */
 .prose-custom p {
-  @apply mb-5 leading-relaxed;
+  @apply leading-relaxed;
 }
 
 /* Links */
@@ -189,7 +208,7 @@ button:disabled {
 
 /* Block Code (Pre) */
 .prose-custom pre {
-  @apply mb-6 overflow-x-auto rounded-lg p-4;
+  @apply overflow-x-auto rounded-lg p-4;
   background-color: var(--code-block-bg);
   border: 1px solid var(--code-block-border);
   font-family: var(--font-mono);
@@ -204,18 +223,18 @@ button:disabled {
 
 /* Blockquote */
 .prose-custom blockquote {
-  @apply mb-6 pl-5 italic;
-  border-left: 4px solid var(--color-gray); /* Standard grey border */
+  @apply pl-5 italic;
+  border-left: 4px solid var(--color-gray);
   color: var(--color-gray-foreground);
 }
 
 /* Lists */
 .prose-custom ul {
-  @apply mb-5 ml-6 list-disc space-y-2;
+  @apply ml-6 list-disc space-y-2;
 }
 
 .prose-custom ol {
-  @apply mb-5 ml-6 list-decimal space-y-2;
+  @apply ml-6 list-decimal space-y-2;
 }
 
 .prose-custom li {
@@ -229,12 +248,12 @@ button:disabled {
 
 .prose-custom li > ul,
 .prose-custom li > ol {
-  @apply mt-2 mb-0;
+  @apply mt-2;
 }
 
 /* Tables */
 .prose-custom table {
-  @apply mb-6 w-full border-collapse text-sm;
+  @apply w-full border-collapse text-sm;
 }
 
 .prose-custom thead {
@@ -259,18 +278,22 @@ button:disabled {
 }
 
 .prose-custom tr:nth-child(even) {
-  background-color: rgba(125, 125, 125, 0.05); /* Subtle zebra striping */
+  background-color: rgba(125, 125, 125, 0.05);
 }
 
 /* Horizontal Rule */
+.prose-custom > * + hr {
+  margin-top: 2.5rem;
+}
+
 .prose-custom hr {
-  @apply my-10 h-px border-0;
+  @apply mb-10 h-px border-0;
   background-color: var(--color-line);
 }
 
 /* Images */
 .prose-custom img {
-  @apply my-8 block h-auto w-full rounded-lg;
+  @apply mx-auto block h-auto max-w-full rounded-lg;
   border: 1px solid var(--color-line);
 }
 
@@ -293,6 +316,97 @@ button:disabled {
 
 .tiptap-editor .ProseMirror-focused {
   outline: none;
+}
+
+/* Tiptap Image Resize 스타일 */
+.tiptap-editor {
+  img {
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* 이미지 container 가운데 정렬 */
+  [data-resize-container] {
+    justify-content: center !important;
+  }
+
+  [data-resize-handle] {
+    position: absolute;
+    background: var(--color-primary);
+    z-index: 1;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    /* Corner handles */
+    &[data-resize-handle='top-left'],
+    &[data-resize-handle='top-right'],
+    &[data-resize-handle='bottom-left'],
+    &[data-resize-handle='bottom-right'] {
+      width: 8px;
+      height: 8px;
+    }
+
+    &[data-resize-handle='top-left'] {
+      top: -4px;
+      left: -4px;
+      cursor: nwse-resize;
+    }
+
+    &[data-resize-handle='top-right'] {
+      top: -4px;
+      right: -4px;
+      cursor: nesw-resize;
+    }
+
+    &[data-resize-handle='bottom-left'] {
+      bottom: -4px;
+      left: -4px;
+      cursor: nesw-resize;
+    }
+
+    &[data-resize-handle='bottom-right'] {
+      bottom: -4px;
+      right: -4px;
+      cursor: nwse-resize;
+    }
+
+    /* Edge handles */
+    &[data-resize-handle='top'],
+    &[data-resize-handle='bottom'] {
+      height: 6px;
+      left: 8px;
+      right: 8px;
+    }
+
+    &[data-resize-handle='top'] {
+      top: -3px;
+      cursor: ns-resize;
+    }
+
+    &[data-resize-handle='bottom'] {
+      bottom: -3px;
+      cursor: ns-resize;
+    }
+
+    &[data-resize-handle='left'],
+    &[data-resize-handle='right'] {
+      width: 6px;
+      top: 8px;
+      bottom: 8px;
+    }
+
+    &[data-resize-handle='left'] {
+      left: -3px;
+      cursor: ew-resize;
+    }
+
+    &[data-resize-handle='right'] {
+      right: -3px;
+      cursor: ew-resize;
+    }
+  }
 }
 
 /* Tiptap 코드 블록 스타일 */

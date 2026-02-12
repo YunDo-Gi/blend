@@ -61,6 +61,11 @@ export default function TiptapEditor({
       Image.configure({
         inline: false,
         allowBase64: false,
+        resize: {
+          enabled: true,
+          minWidth: 100,
+          alwaysPreserveAspectRatio: true,
+        },
       }),
       CodeBlockLowlight.extend({
         addNodeView() {

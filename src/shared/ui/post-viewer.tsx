@@ -32,7 +32,23 @@ export default function PostViewer({ blocks, postId }: PostViewerProps) {
       StarterKit.configure({
         codeBlock: false,
       }),
-      Image.configure({
+      Image.extend({
+        addAttributes() {
+          return {
+            ...this.parent?.(),
+            width: {
+              default: null,
+              parseHTML: (element) => element.getAttribute('width'),
+              renderHTML: (attributes) => {
+                if (!attributes.width) {
+                  return {};
+                }
+                return { width: attributes.width };
+              },
+            },
+          };
+        },
+      }).configure({
         inline: false,
         allowBase64: false,
       }),
