@@ -26,6 +26,7 @@ export async function apiClient<T>(
 
   const config: RequestInit = {
     method,
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       ...headers,
@@ -37,6 +38,14 @@ export async function apiClient<T>(
   }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+
+  // Handle 401 Unauthorized - auto logout
+  if (response.status === 401) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('blend.auth.user');
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+    }
+  }
 
   if (!response.ok) {
     const error: ApiError = await response.json().catch(() => ({
@@ -50,5 +59,11 @@ export async function apiClient<T>(
     return undefined as T;
   }
 
-  return response.json();
+  // Handle empty response body (e.g., login endpoint returns 200 with no body)
+  const text = await response.text();
+  if (!text) {
+    return undefined as T;
+  }
+
+  return JSON.parse(text);
 }

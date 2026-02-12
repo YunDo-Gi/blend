@@ -1,6 +1,14 @@
 // API Response Types (from Swagger definitions)
 import type { JSONContent } from '@tiptap/react';
 
+export interface UserResponse {
+  id: string;
+  email: string;
+  nickname: string;
+  is_admin: boolean;
+  created_at: string;
+}
+
 export interface Category {
   id: string;
   name: string;
@@ -53,6 +61,11 @@ export interface PostListResponse {
 
 // Request Types
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
 export interface CreateCategoryRequest {
   name: string;
 }
@@ -103,6 +116,8 @@ export interface DeleteCommentRequest {
 // Error Types
 
 export type ErrorCode =
+  | 100 // PasswordMismatch
+  | 101 // UserNotFound
   | 1001 // PostNotFound
   | 1002 // PostAlreadyExists
   | 1501 // PostBlockNotFound
