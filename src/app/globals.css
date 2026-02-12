@@ -1,3 +1,5 @@
+﻿@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import 'highlight.js/styles/github-dark.css';
 @import 'tailwindcss';
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -27,11 +29,12 @@
   /* Font families */
   --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    'Noto Sans', sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
-  --font-heading: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    'Pretendard Variable', Pretendard, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+  --font-heading: 'Pretendard Variable', Pretendard, ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Pretendard Variable', Pretendard, ui-sans-serif, system-ui, sans-serif;
 
   --aspect-image: 16 / 10;
 }
@@ -63,6 +66,11 @@ body {
   font-family: var(--font-body);
 }
 
+.font-mono {
+  font-family:
+    var(--font-geist-mono), ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
 /* Button cursor styles */
 button:not(:disabled) {
   cursor: pointer;
@@ -71,9 +79,6 @@ button:not(:disabled) {
 button:disabled {
   cursor: not-allowed;
 }
-
-/* Highlight.js 코드 하이라이팅 스타일 */
-@import 'highlight.js/styles/github-dark.css';
 
 /* 커스텀 코드 블록 스타일 */
 .hljs {

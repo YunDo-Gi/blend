@@ -1,8 +1,9 @@
-import PostContent from '@/domain/post-detail/components/post-content';
+﻿import PostContent from '@/domain/post-detail/components/post-content';
 import TableOfContents from '@/domain/post-detail/components/table-of-contents';
 import CommentsSection from '@/domain/post-detail/components/comments-section';
+import PostHeader from '@/domain/post-detail/components/post-header';
 import { extractTocFromBlocks } from '@/shared/lib/toc';
-import type { PostBlock } from '@/shared/types/api';
+import type { Post, PostBlock } from '@/shared/types/api';
 
 // 테스트용 블록 데이터 (API 응답 형태)
 const testBlocks: PostBlock[] = [
@@ -258,7 +259,15 @@ const fetchData = async () => {
     },
   },
 ];
-
+const testPost: Post = {
+  id: 'test-post',
+  title: 'Tiptap JSON 기반 렌더링 테스트',
+  author: 'test-author',
+  category: 'Test',
+  thumbnail: '',
+  created_at: '2025-01-26T00:00:00Z',
+  blocks: testBlocks,
+};
 export default function TestPage() {
   const toc = extractTocFromBlocks(testBlocks);
 
@@ -267,15 +276,11 @@ export default function TestPage() {
       <div className="flex justify-center gap-8">
         {/* 메인 컨텐츠 */}
         <div className="max-w-2xl flex-1">
-          <header className="mb-8 flex flex-col pb-8">
-            <time className="text-gray-foreground pb-3 font-mono text-sm font-semibold">2025.01.26</time>
-            <h1 className="text-foreground mb-4 text-5xl font-bold">Tiptap JSON 기반 렌더링 테스트</h1>
-            <p className="text-gray-foreground">Tiptap JSON 구조로 렌더링을 테스트하는 페이지입니다.</p>
-          </header>
+          <PostHeader post={testPost} />
 
-          <PostContent blocks={testBlocks} postId="test-post" />
+          <PostContent blocks={testBlocks} postId={testPost.id} />
 
-          <CommentsSection postId="test-post" />
+          <CommentsSection postId={testPost.id} />
         </div>
 
         {/* TOC 사이드바 */}
