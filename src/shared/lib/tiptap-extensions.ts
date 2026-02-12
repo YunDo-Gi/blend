@@ -1,5 +1,4 @@
 import { Extension } from '@tiptap/react';
-import { v4 as uuidv4 } from 'uuid';
 
 /** 블록 ID Extension이 적용되는 노드 타입 */
 const BLOCK_TYPES = [
@@ -15,18 +14,16 @@ const BLOCK_TYPES = [
 interface BlockIdExtensionOptions {
   /** 에디터 모드 (true: 편집 가능, false: 읽기 전용) */
   editable?: boolean;
-  /** ID 생성 함수 (기본: uuid v4) */
-  generateId?: () => string;
 }
 
 /**
  * 블록 노드에 고유 ID를 부여하는 Tiptap Extension
  *
- * @param options.editable - true면 에디터용 (ID 생성, data-id 사용), false면 뷰어용 (id, data-block-id 사용)
- * @param options.generateId - 커스텀 ID 생성 함수
+ * - 에디터 모드 (editable: true): ID 자동 생성 안 함, 기존 ID만 유지
+ * - 뷰어 모드 (editable: false): 서버에서 받은 ID로 data-block-id 렌더링
  */
 export function createBlockIdExtension(options: BlockIdExtensionOptions = {}) {
-  const { editable = false, generateId = uuidv4 } = options;
+  const { editable = false } = options;
 
   return Extension.create({
     name: 'blockId',
@@ -38,13 +35,9 @@ export function createBlockIdExtension(options: BlockIdExtensionOptions = {}) {
           attributes: {
             id: {
               default: null,
-              parseHTML: editable ? (element) => element.getAttribute('data-id') : undefined,
               renderHTML: (attributes) => {
+                // ID가 없으면 아무것도 렌더링 안 함
                 if (!attributes.id) {
-                  // 에디터 모드에서 ID가 없으면 새로 생성
-                  if (editable) {
-                    return { 'data-id': generateId() };
-                  }
                   return {};
                 }
 
@@ -57,38 +50,19 @@ export function createBlockIdExtension(options: BlockIdExtensionOptions = {}) {
                   };
                 }
 
-                // 에디터 모드: data-id만 추가
-                return { 'data-id': attributes.id };
+                // 에디터 모드: ID가 있으면 유지 (새 블록은 ID 없음)
+                return {};
               },
             },
           },
         },
       ];
     },
-
-    onCreate() {
-      // 에디터 모드에서만 ID가 없는 노드에 ID 부여
-      if (!editable) return;
-
-      const { tr } = this.editor.state;
-      let modified = false;
-
-      this.editor.state.doc.descendants((node, pos) => {
-        if (node.type.spec.group === 'block' && !node.attrs.id) {
-          tr.setNodeMarkup(pos, undefined, { ...node.attrs, id: generateId() });
-          modified = true;
-        }
-      });
-
-      if (modified) {
-        this.editor.view.dispatch(tr);
-      }
-    },
   });
 }
 
-/** 뷰어용 BlockId Extension (읽기 전용) */
+/** 뷰어용 BlockId Extension (읽기 전용, 댓글 시스템용 data-block-id 렌더링) */
 export const BlockIdExtension = createBlockIdExtension({ editable: false });
 
-/** 에디터용 BlockId Extension (편집 가능, ID 자동 생성) */
+/** 에디터용 BlockId Extension (ID 자동 생성 안 함, 서버에서 생성) */
 export const EditableBlockIdExtension = createBlockIdExtension({ editable: true });

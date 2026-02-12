@@ -1,4 +1,5 @@
 import type { JSONContent } from '@tiptap/react';
+import type { PostBlock } from '@/shared/types/api';
 
 export interface TocItem {
   id: string;
@@ -17,17 +18,18 @@ function getTextFromContent(content?: JSONContent[]): string {
     .join('');
 }
 
-export function extractTocFromContent(doc: JSONContent): TocItem[] {
+/**
+ * API 블록 배열에서 TOC 추출
+ */
+export function extractTocFromBlocks(blocks: PostBlock[]): TocItem[] {
   const toc: TocItem[] = [];
 
-  if (!doc.content) return toc;
-
-  for (const node of doc.content) {
-    if (node.type === 'heading' && node.attrs?.id && node.attrs?.level) {
+  for (const block of blocks) {
+    if (block.content.type === 'heading' && block.content.attrs?.level) {
       toc.push({
-        id: node.attrs.id as string,
-        title: getTextFromContent(node.content),
-        level: node.attrs.level as number,
+        id: block.id,
+        title: getTextFromContent(block.content.content),
+        level: block.content.attrs.level as number,
       });
     }
   }

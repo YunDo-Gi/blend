@@ -6,6 +6,19 @@ export interface Category {
   name: string;
 }
 
+/** 블록 응답 타입 (서버에서 반환) */
+export interface PostBlock {
+  id: string;
+  content: JSONContent;
+  rank_order: string;
+}
+
+/** 블록 요청 타입 (클라이언트에서 전송) */
+export interface PostBlockRequest {
+  id?: string; // 기존 블록은 ID 있음, 새 블록은 생략
+  content: JSONContent;
+}
+
 export interface Post {
   id: string;
   title: string;
@@ -13,7 +26,7 @@ export interface Post {
   category: string;
   thumbnail: string;
   created_at: string;
-  content: JSONContent;
+  blocks: PostBlock[];
 }
 
 export interface Comment {
@@ -56,12 +69,17 @@ export interface CreatePostRequest {
   status?: string;
 }
 
+/** 포스트 메타데이터 수정 요청 (PATCH /post/{id}) */
 export interface UpdatePostRequest {
-  title: string;
-  content: JSONContent;
+  title?: string;
   category_id?: string;
   thumbnail?: string;
   status?: string;
+}
+
+/** 포스트 본문 수정 요청 (PUT /post/{id}/content) */
+export interface UpdatePostContentRequest {
+  blocks: PostBlockRequest[];
 }
 
 export interface CreateCommentRequest {

@@ -1,32 +1,30 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { useEditor, EditorContent, JSONContent } from '@tiptap/react';
+import { useEffect, useRef, useMemo } from 'react';
+import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
 import { BlockIdExtension } from '@/shared/lib/tiptap-extensions';
+import { apiToTiptap, extractBlockIdsFromApi } from '@/shared/lib/block-transform';
 import CommentIndicator from '@/domain/post-detail/components/comment-indicator';
 import { createRoot, Root } from 'react-dom/client';
+import type { PostBlock } from '@/shared/types/api';
 
 const lowlight = createLowlight(common);
 
 interface PostViewerProps {
-  content: JSONContent;
+  blocks: PostBlock[];
   postId: string;
 }
 
-// content에서 최상위 블록 ID 추출
-function extractBlockIds(content: JSONContent): string[] {
-  if (!content.content) return [];
-  return content.content
-    .filter((node) => node.attrs?.id)
-    .map((node) => node.attrs!.id as string);
-}
-
-export default function PostViewer({ content, postId }: PostViewerProps) {
+export default function PostViewer({ blocks, postId }: PostViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rootsRef = useRef<Map<string, Root>>(new Map());
+
+  // blocks → Tiptap JSON 변환
+  const content = useMemo(() => apiToTiptap(blocks), [blocks]);
+  const blockIds = useMemo(() => extractBlockIdsFromApi(blocks), [blocks]);
 
   const editor = useEditor({
     extensions: [
@@ -51,8 +49,6 @@ export default function PostViewer({ content, postId }: PostViewerProps) {
   // 에디터 렌더링 후 댓글 버튼 추가
   useEffect(() => {
     if (!editor || !containerRef.current) return;
-
-    const blockIds = extractBlockIds(content);
 
     const addCommentButtons = () => {
       blockIds.forEach((blockId) => {
@@ -88,7 +84,7 @@ export default function PostViewer({ content, postId }: PostViewerProps) {
         roots.forEach((root) => root.unmount());
       }, 0);
     };
-  }, [editor, content, postId]);
+  }, [editor, blockIds, postId]);
 
   if (!editor) {
     return null;

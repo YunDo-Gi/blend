@@ -4,6 +4,7 @@ import {
   PostListResponse,
   CreatePostRequest,
   UpdatePostRequest,
+  UpdatePostContentRequest,
 } from '@/shared/types/api';
 
 const BASE_PATH = '/api/v1/post';
@@ -33,9 +34,23 @@ export const postApi = {
       body: data,
     }),
 
+  /** 포스트 메타데이터 수정 (PATCH /post/{id}) */
   update: (id: string, data: UpdatePostRequest) =>
     apiClient<Post>(`${BASE_PATH}/${id}`, {
+      method: 'PATCH',
+      body: data,
+    }),
+
+  /** 포스트 본문 수정 (PUT /post/{id}/content) */
+  updateContent: (id: string, data: UpdatePostContentRequest) =>
+    apiClient<Post>(`${BASE_PATH}/${id}/content`, {
       method: 'PUT',
       body: data,
+    }),
+
+  /** 포스트 삭제 (DELETE /post/{id}) */
+  delete: (id: string) =>
+    apiClient<void>(`${BASE_PATH}/${id}`, {
+      method: 'DELETE',
     }),
 };

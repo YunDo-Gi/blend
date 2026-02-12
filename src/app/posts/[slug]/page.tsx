@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { postApi } from '@/shared/api';
 import { Post } from '@/shared/types/api';
-import { extractTocFromContent } from '@/shared/lib/toc';
+import { extractTocFromBlocks } from '@/shared/lib/toc';
 import PostHeader from '@/domain/post-detail/components/post-header';
 import PostContent from '@/domain/post-detail/components/post-content';
 import CommentsSection from '@/domain/post-detail/components/comments-section';
@@ -27,7 +27,7 @@ export default async function PostPage({ params }: PostPageProps) {
     notFound();
   }
 
-  const toc = extractTocFromContent(post.content);
+  const toc = extractTocFromBlocks(post.blocks);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -36,7 +36,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <div className="max-w-2xl flex-1">
           <PostHeader post={post} />
 
-          <PostContent content={post.content} postId={post.id} />
+          <PostContent blocks={post.blocks} postId={post.id} />
 
           <CommentsSection postId={post.id} />
         </div>

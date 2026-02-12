@@ -1,21 +1,25 @@
-import type { JSONContent } from '@tiptap/react';
 import PostContent from '@/domain/post-detail/components/post-content';
 import TableOfContents from '@/domain/post-detail/components/table-of-contents';
 import CommentsSection from '@/domain/post-detail/components/comments-section';
-import { extractTocFromContent } from '@/shared/lib/toc';
+import { extractTocFromBlocks } from '@/shared/lib/toc';
+import type { PostBlock } from '@/shared/types/api';
 
-// Tiptap JSON 테스트 데이터
-const testContent: JSONContent = {
-  type: 'doc',
-  content: [
-    {
+// 테스트용 블록 데이터 (API 응답 형태)
+const testBlocks: PostBlock[] = [
+  {
+    id: 'block-1',
+    rank_order: 'a',
+    content: {
       type: 'heading',
-      attrs: { id: 'block-1', level: 1 },
+      attrs: { level: 1 },
       content: [{ type: 'text', text: 'H1 제목 - 가장 큰 제목' }],
     },
-    {
+  },
+  {
+    id: 'block-2',
+    rank_order: 'b',
+    content: {
       type: 'paragraph',
-      attrs: { id: 'block-2' },
       content: [
         { type: 'text', text: '이것은 일반 문단입니다. ' },
         { type: 'text', marks: [{ type: 'bold' }], text: '굵은 텍스트' },
@@ -28,29 +32,47 @@ const testContent: JSONContent = {
         { type: 'text', text: '를 포함합니다.' },
       ],
     },
-    {
+  },
+  {
+    id: 'block-3',
+    rank_order: 'c',
+    content: {
       type: 'heading',
-      attrs: { id: 'block-3', level: 2 },
+      attrs: { level: 2 },
       content: [{ type: 'text', text: 'H2 제목 - 두 번째 레벨' }],
     },
-    {
+  },
+  {
+    id: 'block-4',
+    rank_order: 'd',
+    content: {
       type: 'heading',
-      attrs: { id: 'block-4', level: 3 },
+      attrs: { level: 3 },
       content: [{ type: 'text', text: 'H3 제목 - 세 번째 레벨' }],
     },
-    {
+  },
+  {
+    id: 'block-5',
+    rank_order: 'e',
+    content: {
       type: 'heading',
-      attrs: { id: 'block-5', level: 2 },
+      attrs: { level: 2 },
       content: [{ type: 'text', text: '목록' }],
     },
-    {
+  },
+  {
+    id: 'block-6',
+    rank_order: 'f',
+    content: {
       type: 'paragraph',
-      attrs: { id: 'block-6' },
       content: [{ type: 'text', text: '순서 없는 목록:' }],
     },
-    {
+  },
+  {
+    id: 'block-7',
+    rank_order: 'g',
+    content: {
       type: 'bulletList',
-      attrs: { id: 'block-7' },
       content: [
         {
           type: 'listItem',
@@ -66,14 +88,20 @@ const testContent: JSONContent = {
         },
       ],
     },
-    {
+  },
+  {
+    id: 'block-8',
+    rank_order: 'h',
+    content: {
       type: 'paragraph',
-      attrs: { id: 'block-8' },
       content: [{ type: 'text', text: '순서 있는 목록:' }],
     },
-    {
+  },
+  {
+    id: 'block-9',
+    rank_order: 'i',
+    content: {
       type: 'orderedList',
-      attrs: { id: 'block-9' },
       content: [
         {
           type: 'listItem',
@@ -89,14 +117,21 @@ const testContent: JSONContent = {
         },
       ],
     },
-    {
+  },
+  {
+    id: 'block-10',
+    rank_order: 'j',
+    content: {
       type: 'heading',
-      attrs: { id: 'block-10', level: 2 },
+      attrs: { level: 2 },
       content: [{ type: 'text', text: '인용문' }],
     },
-    {
+  },
+  {
+    id: 'block-11',
+    rank_order: 'k',
+    content: {
       type: 'blockquote',
-      attrs: { id: 'block-11' },
       content: [
         {
           type: 'paragraph',
@@ -104,14 +139,22 @@ const testContent: JSONContent = {
         },
       ],
     },
-    {
+  },
+  {
+    id: 'block-12',
+    rank_order: 'l',
+    content: {
       type: 'heading',
-      attrs: { id: 'block-12', level: 2 },
+      attrs: { level: 2 },
       content: [{ type: 'text', text: '코드 블록' }],
     },
-    {
+  },
+  {
+    id: 'block-13',
+    rank_order: 'm',
+    content: {
       type: 'codeBlock',
-      attrs: { id: 'block-13', language: 'typescript' },
+      attrs: { language: 'typescript' },
       content: [
         {
           type: 'text',
@@ -127,9 +170,13 @@ function greet(user: User): string {
         },
       ],
     },
-    {
+  },
+  {
+    id: 'block-14',
+    rank_order: 'n',
+    content: {
       type: 'codeBlock',
-      attrs: { id: 'block-14', language: 'javascript' },
+      attrs: { language: 'javascript' },
       content: [
         {
           type: 'text',
@@ -142,33 +189,53 @@ const fetchData = async () => {
         },
       ],
     },
-    {
+  },
+  {
+    id: 'block-15',
+    rank_order: 'o',
+    content: {
       type: 'heading',
-      attrs: { id: 'block-15', level: 2 },
+      attrs: { level: 2 },
       content: [{ type: 'text', text: '구분선' }],
     },
-    {
+  },
+  {
+    id: 'block-16',
+    rank_order: 'p',
+    content: {
       type: 'paragraph',
-      attrs: { id: 'block-16' },
       content: [{ type: 'text', text: '위 섹션과 아래 섹션을 구분합니다.' }],
     },
-    {
+  },
+  {
+    id: 'block-17',
+    rank_order: 'q',
+    content: {
       type: 'horizontalRule',
-      attrs: { id: 'block-17' },
     },
-    {
+  },
+  {
+    id: 'block-18',
+    rank_order: 'r',
+    content: {
       type: 'paragraph',
-      attrs: { id: 'block-18' },
       content: [{ type: 'text', text: '구분선 아래의 내용입니다.' }],
     },
-    {
+  },
+  {
+    id: 'block-19',
+    rank_order: 's',
+    content: {
       type: 'heading',
-      attrs: { id: 'block-19', level: 2 },
+      attrs: { level: 2 },
       content: [{ type: 'text', text: '긴 문단 테스트' }],
     },
-    {
+  },
+  {
+    id: 'block-20',
+    rank_order: 't',
+    content: {
       type: 'paragraph',
-      attrs: { id: 'block-20' },
       content: [
         {
           type: 'text',
@@ -176,9 +243,12 @@ const fetchData = async () => {
         },
       ],
     },
-    {
+  },
+  {
+    id: 'block-21',
+    rank_order: 'u',
+    content: {
       type: 'paragraph',
-      attrs: { id: 'block-21' },
       content: [
         {
           type: 'text',
@@ -186,11 +256,11 @@ const fetchData = async () => {
         },
       ],
     },
-  ],
-};
+  },
+];
 
 export default function TestPage() {
-  const toc = extractTocFromContent(testContent);
+  const toc = extractTocFromBlocks(testBlocks);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
@@ -203,7 +273,7 @@ export default function TestPage() {
             <p className="text-gray-foreground">Tiptap JSON 구조로 렌더링을 테스트하는 페이지입니다.</p>
           </header>
 
-          <PostContent content={testContent} postId="test-post" />
+          <PostContent blocks={testBlocks} postId="test-post" />
 
           <CommentsSection postId="test-post" />
         </div>
