@@ -5,6 +5,7 @@ import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent } from '@t
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Image from '@tiptap/extension-image';
+import FileHandler from '@tiptap/extension-file-handler';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
 import { EditableBlockIdExtension } from '@/shared/lib/tiptap-extensions';
@@ -65,6 +66,34 @@ export default function TiptapEditor({
           enabled: true,
           minWidth: 100,
           alwaysPreserveAspectRatio: true,
+        },
+      }),
+      FileHandler.configure({
+        allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+        onDrop: (currentEditor, files, pos) => {
+          files.forEach((file) => {
+            if (file.size > 10 * 1024 * 1024) {
+              alert('파일 크기는 10MB 이하여야 합니다.');
+              return;
+            }
+            const blobUrl = URL.createObjectURL(file);
+            currentEditor.chain().focus().insertContentAt(pos, {
+              type: 'image',
+              attrs: { src: blobUrl },
+            }).run();
+            onImageAdded?.(blobUrl, file);
+          });
+        },
+        onPaste: (currentEditor, files) => {
+          files.forEach((file) => {
+            if (file.size > 10 * 1024 * 1024) {
+              alert('파일 크기는 10MB 이하여야 합니다.');
+              return;
+            }
+            const blobUrl = URL.createObjectURL(file);
+            currentEditor.chain().focus().setImage({ src: blobUrl }).run();
+            onImageAdded?.(blobUrl, file);
+          });
         },
       }),
       CodeBlockLowlight.extend({

@@ -288,7 +288,7 @@ export default function PostWriteEditor() {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-line bg-background text-foreground hover:bg-gray-2 border px-3 py-2 font-mono text-xs transition-colors"
+                  className="border-line bg-background text-foreground hover:bg-gray-2 border px-3 py-2 font-mono text-sm transition-colors"
                 >
                   SELECT
                 </button>
