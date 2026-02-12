@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useEditor, EditorContent, ReactNodeViewRenderer, JSONContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import Image from '@tiptap/extension-image';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
 import { EditableBlockIdExtension } from '@/shared/lib/tiptap-extensions';
@@ -14,6 +15,7 @@ const lowlight = createLowlight(common);
 interface TiptapEditorProps {
   content?: JSONContent;
   onChange?: (content: JSONContent) => void;
+  onImageAdded?: (blobUrl: string, file: File) => void;
   placeholder?: string;
 }
 
@@ -31,9 +33,7 @@ function ToolbarButton({ onClick, isActive, disabled, children }: ToolbarButtonP
       onClick={onClick}
       disabled={disabled}
       className={`px-2 py-1 font-mono text-xs transition-colors ${
-        isActive
-          ? 'bg-foreground text-background'
-          : 'text-foreground hover:bg-gray-2'
+        isActive ? 'bg-foreground text-background' : 'text-foreground hover:bg-gray-2'
       } disabled:opacity-40`}
     >
       {children}
@@ -44,9 +44,11 @@ function ToolbarButton({ onClick, isActive, disabled, children }: ToolbarButtonP
 export default function TiptapEditor({
   content,
   onChange,
+  onImageAdded,
   placeholder = "'/'를 입력하여 명령어 사용...",
 }: TiptapEditorProps) {
   const isInitialMount = useRef(true);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
     extensions: [
@@ -55,6 +57,10 @@ export default function TiptapEditor({
       }),
       Placeholder.configure({
         placeholder,
+      }),
+      Image.configure({
+        inline: false,
+        allowBase64: false,
       }),
       CodeBlockLowlight.extend({
         addNodeView() {
@@ -89,6 +95,37 @@ export default function TiptapEditor({
     }
   }, [editor, content]);
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !editor) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드할 수 있습니다.');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('파일 크기는 10MB 이하여야 합니다.');
+      return;
+    }
+
+    // Create blob URL for preview
+    const blobUrl = URL.createObjectURL(file);
+
+    // Insert image with blob URL
+    editor.chain().focus().setImage({ src: blobUrl }).run();
+
+    // Notify parent component
+    onImageAdded?.(blobUrl, file);
+
+    // Reset file input
+    if (imageInputRef.current) {
+      imageInputRef.current.value = '';
+    }
+  };
+
   if (!editor) {
     return null;
   }
@@ -118,28 +155,16 @@ export default function TiptapEditor({
 
         <div className="bg-line mx-1 w-px" />
 
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          isActive={editor.isActive('bold')}
-        >
+        <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')}>
           B
         </ToolbarButton>
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          isActive={editor.isActive('italic')}
-        >
+        <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} isActive={editor.isActive('italic')}>
           I
         </ToolbarButton>
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          isActive={editor.isActive('strike')}
-        >
+        <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} isActive={editor.isActive('strike')}>
           S
         </ToolbarButton>
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          isActive={editor.isActive('code')}
-        >
+        <ToolbarButton onClick={() => editor.chain().focus().toggleCode().run()} isActive={editor.isActive('code')}>
           {'</>'}
         </ToolbarButton>
 
@@ -172,11 +197,10 @@ export default function TiptapEditor({
 
         <div className="bg-line mx-1 w-px" />
 
-        <ToolbarButton
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
-        >
-          HR
-        </ToolbarButton>
+        <ToolbarButton onClick={() => editor.chain().focus().setHorizontalRule().run()}>HR</ToolbarButton>
+
+        <input ref={imageInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+        <ToolbarButton onClick={() => imageInputRef.current?.click()}>IMAGE</ToolbarButton>
       </div>
 
       {/* Editor */}

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Image from '@tiptap/extension-image';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
 import { BlockIdExtension } from '@/shared/lib/tiptap-extensions';
@@ -30,6 +31,10 @@ export default function PostViewer({ blocks, postId }: PostViewerProps) {
     extensions: [
       StarterKit.configure({
         codeBlock: false,
+      }),
+      Image.configure({
+        inline: false,
+        allowBase64: false,
       }),
       CodeBlockLowlight.configure({
         lowlight,

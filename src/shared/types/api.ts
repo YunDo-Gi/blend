@@ -113,6 +113,10 @@ export interface DeleteCommentRequest {
   guest_password?: string;
 }
 
+export interface FileUploadResponse {
+  url: string;
+}
+
 // Error Types
 
 export type ErrorCode =
