@@ -1,28 +1,36 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import SectionHeader from '../../../shared/ui/section-header';
-
-interface CategoryItem {
-  name: string;
-  value: string;
-}
+import { categoryApi } from '@/shared/api';
+import { Category } from '@/shared/types/api';
 
 interface CategorySidebarProps {
   onCategoryChangeAction: (category: string) => void;
 }
 
-const categories: CategoryItem[] = [
-  { name: 'All', value: 'all' },
-  { name: 'Frontend', value: 'frontend' },
-  { name: 'Backend', value: 'backend' },
-  { name: 'Blog Dev Log', value: 'blog' },
-];
-
 export default function CategorySidebar({ onCategoryChangeAction }: CategorySidebarProps) {
   const searchParams = useSearchParams();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const activeCategory = searchParams.get('category') || 'all';
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await categoryApi.getAll();
+        setCategories(data);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleCategoryClick = (categoryValue: string) => {
     onCategoryChangeAction(categoryValue);
@@ -32,25 +40,44 @@ export default function CategorySidebar({ onCategoryChangeAction }: CategorySide
     <div className="w-56 p-4">
       <SectionHeader title="/ CATEGORY" />
 
-      <ul className="space-y-3">
-        {categories.map((category, index) => (
-          <li key={index}>
+      {isLoading ? (
+        <p className="text-gray text-sm">Loading...</p>
+      ) : (
+        <ul className="space-y-3">
+          <li>
             <button
-              onClick={() => handleCategoryClick(category.value)}
+              onClick={() => handleCategoryClick('all')}
               className={`flex w-full cursor-pointer items-center gap-3 text-left transition-colors ${
-                activeCategory === category.value ? 'text-foreground' : 'hover:text-foreground text-gray'
+                activeCategory === 'all' ? 'text-foreground' : 'hover:text-foreground text-gray'
               }`}
             >
               <div
                 className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                  activeCategory === category.value ? 'bg-foreground' : 'border-gray border-2'
+                  activeCategory === 'all' ? 'bg-foreground' : 'border-gray border-2'
                 }`}
               />
-              <span>{category.name}</span>
+              <span>All</span>
             </button>
           </li>
-        ))}
-      </ul>
+          {categories.map((category) => (
+            <li key={category.id}>
+              <button
+                onClick={() => handleCategoryClick(category.id)}
+                className={`flex w-full cursor-pointer items-center gap-3 text-left transition-colors ${
+                  activeCategory === category.id ? 'text-foreground' : 'hover:text-foreground text-gray'
+                }`}
+              >
+                <div
+                  className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                    activeCategory === category.id ? 'bg-foreground' : 'border-gray border-2'
+                  }`}
+                />
+                <span>{category.name}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
