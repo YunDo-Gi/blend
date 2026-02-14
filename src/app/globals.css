@@ -309,6 +309,7 @@ button:disabled {
 /* Tiptap 에디터 스타일 */
 .tiptap-editor {
   @apply min-h-[500px] outline-none;
+  caret-color: var(--color-primary);
 }
 
 .tiptap-editor p.is-editor-empty:first-child::before {

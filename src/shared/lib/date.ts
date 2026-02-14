@@ -15,11 +15,12 @@ export function formatDate(dateString: string | Date): string {
  * @param timestamp - Unix timestamp (밀리초)
  */
 export function formatSavedTime(timestamp: number | null): string {
-  if (!timestamp) return '저장 대기 중';
-  return `임시저장 ${new Date(timestamp).toLocaleTimeString('ko-KR', {
+  if (!timestamp) return 'Waiting to save';
+  return `Saved at ${new Date(timestamp).toLocaleTimeString('en-US', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
+    hour12: false,
   })}`;
 }
 

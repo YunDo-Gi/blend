@@ -53,9 +53,7 @@ export function usePostDraft() {
         categoryId: typeof parsed.categoryId === 'string' ? parsed.categoryId : prev.categoryId,
         thumbnail: typeof parsed.thumbnail === 'string' ? parsed.thumbnail : prev.thumbnail,
         content:
-          parsed.content &&
-          typeof parsed.content === 'object' &&
-          !Array.isArray(parsed.content)
+          parsed.content && typeof parsed.content === 'object' && !Array.isArray(parsed.content)
             ? (parsed.content as JSONContent)
             : prev.content,
       }));
@@ -70,7 +68,7 @@ export function usePostDraft() {
     const timeoutId = window.setTimeout(() => {
       localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(form));
       setLastSavedAt(Date.now());
-    }, 1000);
+    }, 3000);
 
     return () => window.clearTimeout(timeoutId);
   }, [form, isReady]);
@@ -84,6 +82,11 @@ export function usePostDraft() {
     );
   }, [form]);
 
+  const saveDraft = () => {
+    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(form));
+    setLastSavedAt(Date.now());
+  };
+
   const clearDraft = () => {
     localStorage.removeItem(DRAFT_STORAGE_KEY);
     setForm(INITIAL_POST_DRAFT);
@@ -96,6 +99,7 @@ export function usePostDraft() {
     isDirty,
     isReady,
     lastSavedAt,
+    saveDraft,
     clearDraft,
   };
 }

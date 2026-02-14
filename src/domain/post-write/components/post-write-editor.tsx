@@ -18,7 +18,7 @@ function hasContent(node?: JSONContent): boolean {
 
 export default function PostWriteEditor() {
   const router = useRouter();
-  const { form, setForm, isDirty, isReady, lastSavedAt, clearDraft } = usePostDraft();
+  const { form, setForm, isDirty, isReady, lastSavedAt, saveDraft, clearDraft } = usePostDraft();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
@@ -208,109 +208,110 @@ export default function PostWriteEditor() {
   };
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-6 pb-16">
       <header className="border-line bg-background border p-4">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4">
           <h2 className="text-foreground font-mono text-sm">/ META</h2>
-          <div className="text-gray-foreground font-mono text-xs">
-            {isReady ? formatSavedTime(lastSavedAt) : '임시저장 초기화 중'}
-          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-          <label className="block space-y-2">
-            <span className="text-gray-foreground text-xs">TITLE</span>
-            <input
-              value={form.title}
-              onChange={onChangeField('title')}
-              placeholder="제목을 입력하세요"
-              className="border-line bg-background text-foreground w-full border px-3 py-2 text-sm outline-none"
-            />
-          </label>
+        <div className="flex flex-col gap-6 md:flex-row">
+          {/* 왼쪽: TITLE, CATEGORY */}
+          <div className="flex flex-1 flex-col gap-4">
+            <label className="block space-y-2">
+              <span className="text-gray-foreground font-mono text-xs">TITLE</span>
+              <input
+                value={form.title}
+                onChange={onChangeField('title')}
+                placeholder="제목을 입력하세요"
+                className="border-line bg-background text-foreground w-full border px-3 py-2 text-sm outline-none"
+              />
+            </label>
 
-          <label className="block space-y-2">
-            <span className="text-gray-foreground text-xs">CATEGORY</span>
-            <select
-              value={form.categoryId}
-              onChange={onChangeField('categoryId')}
-              className="border-line bg-background text-foreground w-full border px-3 py-2 text-sm outline-none"
-              disabled={loadingCategories}
-            >
-              <option value="">{loadingCategories ? '불러오는 중...' : '선택 안 함'}</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </label>
+            <label className="block space-y-2">
+              <span className="text-gray-foreground font-mono text-xs">CATEGORY</span>
+              <select
+                value={form.categoryId}
+                onChange={onChangeField('categoryId')}
+                className="border-line bg-background text-foreground w-full border px-3 py-2 text-sm outline-none"
+                disabled={loadingCategories}
+              >
+                <option value="">{loadingCategories ? '불러오는 중...' : '선택 안 함'}</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
 
-          <div className="block space-y-2">
-            <span className="text-gray-foreground text-xs">THUMBNAIL</span>
-            <div className="flex gap-2">
-              <div className="flex-1 space-y-2">
-                <input
-                  value={form.thumbnail}
-                  onChange={onChangeField('thumbnail')}
-                  placeholder="https://..."
-                  className="border-line bg-background text-foreground w-full border px-3 py-2 text-sm outline-none"
-                />
-                {form.thumbnail && (
-                  <div className="relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={form.thumbnail}
-                      alt="Thumbnail preview"
-                      className="border-line h-32 w-full border object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = '';
-                        e.currentTarget.alt = 'Failed to load image';
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (form.thumbnail.startsWith('blob:')) {
-                          URL.revokeObjectURL(form.thumbnail);
-                        }
-                        setThumbnailFile(null);
-                        setForm((prev) => ({ ...prev, thumbnail: '' }));
-                      }}
-                      className="bg-background border-line text-foreground hover:bg-gray-2 absolute top-2 right-2 border px-2 py-1 font-mono text-xs transition-colors"
-                    >
-                      REMOVE
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col gap-2">
-                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+          {/* 오른쪽: THUMBNAIL */}
+          <div className="w-full space-y-2 md:w-80">
+            <span className="text-gray-foreground font-mono text-xs">THUMBNAIL</span>
+            <div className="border-line bg-gray-2/30 relative flex aspect-video items-center justify-center border">
+              {form.thumbnail ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={form.thumbnail}
+                    alt="Thumbnail preview"
+                    className="h-full w-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = '';
+                      e.currentTarget.alt = 'Failed to load image';
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (form.thumbnail.startsWith('blob:')) {
+                        URL.revokeObjectURL(form.thumbnail);
+                      }
+                      setThumbnailFile(null);
+                      setForm((prev) => ({ ...prev, thumbnail: '' }));
+                    }}
+                    className="bg-background/80 text-foreground hover:bg-background absolute top-2 right-2 px-2 py-1 font-mono text-xs transition-colors"
+                  >
+                    REMOVE
+                  </button>
+                </>
+              ) : (
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-line bg-background text-foreground hover:bg-gray-2 border px-3 py-2 font-mono text-sm transition-colors"
+                  className="text-gray hover:text-foreground flex flex-col items-center gap-2 transition-colors"
                 >
-                  SELECT
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                    <circle cx="9" cy="9" r="2" />
+                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                  </svg>
+                  <span className="font-mono text-xs">SELECT IMAGE</span>
                 </button>
-              </div>
+              )}
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
             </div>
-          </div>
-
-          <div className="flex flex-col justify-end space-y-2">
-            {errorMessage && <p className="border border-red-400 px-3 py-2 text-xs text-red-500">{errorMessage}</p>}
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={!canSubmit}
-              className="border-foreground text-foreground hover:bg-primary/75 w-full border border-dotted px-4 py-2 font-mono text-sm disabled:opacity-40"
-            >
-              {isSubmitting ? 'PUBLISHING...' : 'PUBLISH'}
-            </button>
+            <input
+              value={form.thumbnail}
+              onChange={onChangeField('thumbnail')}
+              placeholder="또는 URL 입력..."
+              className="border-line bg-background text-foreground placeholder:text-gray w-full border px-3 py-2 text-xs outline-none"
+            />
           </div>
         </div>
       </header>
 
-      <div className="border-line bg-background flex min-h-[600px] flex-col border">
+      <div className="border-line bg-background flex min-h-[500px] flex-col border">
         <TiptapEditor
           content={form.content}
           onChange={(content) => setForm((prev) => ({ ...prev, content }))}
@@ -319,6 +320,35 @@ export default function PostWriteEditor() {
           }}
           placeholder="'/'를 입력하여 명령어 사용..."
         />
+      </div>
+
+      {/* 하단 바 - 화면 하단에 고정 */}
+      <div className="border-line bg-background fixed right-0 bottom-0 left-0 border-t">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+          <div className="text-gray-foreground font-mono text-xs">
+            {isReady ? formatSavedTime(lastSavedAt) : '임시저장 초기화 중'}
+          </div>
+
+          <div className="flex items-center gap-3">
+            {errorMessage && <p className="font-mono text-xs text-red-500">{errorMessage}</p>}
+            <button
+              type="button"
+              onClick={saveDraft}
+              disabled={!isDirty}
+              className="border-line text-foreground hover:bg-gray-2 border px-4 py-2 font-mono text-sm transition-colors disabled:opacity-40"
+            >
+              SAVE DRAFT
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={!canSubmit}
+              className="bg-foreground text-background hover:bg-foreground/80 px-6 py-2 font-mono text-sm transition-colors disabled:opacity-40"
+            >
+              {isSubmitting ? 'PUBLISHING...' : 'PUBLISH'}
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   );

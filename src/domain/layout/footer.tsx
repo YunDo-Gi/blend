@@ -1,6 +1,17 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+const HIDDEN_PATHS = ['/write', '/settings'];
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  if (HIDDEN_PATHS.some((path) => pathname.startsWith(path))) {
+    return null;
+  }
+
   return (
     <footer className="border-line bg-background border-t">
       <div className="border-line mx-auto max-w-7xl border-x p-(--layout-grid-padding)">
