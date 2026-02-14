@@ -61,6 +61,13 @@ export function UserMenu() {
             >
               WRITE
             </Link>
+            <Link
+              href="/settings"
+              onClick={() => setIsDropdownOpen(false)}
+              className="text-foreground hover:bg-gray-2 block px-4 py-2 font-mono text-sm transition-colors"
+            >
+              SETTINGS
+            </Link>
             <button
               onClick={handleLogout}
               disabled={isLoggingOut}

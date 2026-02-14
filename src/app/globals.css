@@ -16,7 +16,7 @@
   --color-foreground: #1f1f1e;
   --color-foreground-light: #3e3e3c;
   --color-line: #cfcfcc;
-  --color-primary: #2cff05;
+  --color-primary: #04e762;
   --color-gray: #a8a8a6;
   --color-gray-foreground: #5f5f5e;
   --color-gray-light: #838381;
@@ -43,7 +43,7 @@
   --color-background: #1f1f1e;
   --color-foreground: #f8f8f5;
   --color-line: #3e3e3d;
-  --color-primary: #2cff05;
+  --color-primary: #04e762;
   --color-gray-foreground: #cfcfcc;
   --color-gray-light: #3e3e3d;
   --color-gray-2: #3a3a38;
@@ -55,6 +55,15 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-body);
+}
+
+/* 텍스트 선택 스타일 */
+::selection {
+  background-color: var(--color-primary);
+}
+
+.dark::selection {
+  color: var(--color-background);
 }
 
 /* Button cursor styles */
