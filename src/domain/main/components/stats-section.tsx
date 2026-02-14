@@ -1,20 +1,17 @@
-interface StatItem {
-  count: number;
-  label: string;
-}
+'use client';
 
-const stats: StatItem[] = [
-  {
-    count: 147,
-    label: 'POSTS',
-  },
-  {
-    count: 8,
-    label: 'CATEGORIES',
-  },
-];
+import { useCategories } from '@/shared/hooks/use-categories';
+import { usePosts } from '@/shared/hooks/use-posts';
 
 export default function StatsSection() {
+  const { data: postsData } = usePosts({ limit: 1 });
+  const { data: categories } = useCategories();
+
+  const stats = [
+    { count: postsData?.pagination.total ?? 0, label: 'POSTS' },
+    { count: categories?.length ?? 0, label: 'CATEGORIES' },
+  ];
+
   return (
     <div className="border-line space-y-2 border-t py-(--layout-grid-padding)">
       {stats.map((stat, index) => (

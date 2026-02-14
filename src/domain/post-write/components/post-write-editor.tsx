@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import type { JSONContent } from '@tiptap/react';
-import { categoryApi, postApi, uploadApi, ApiException } from '@/shared/api';
-import { Category } from '@/shared/types/api';
+import { postApi, uploadApi, ApiException } from '@/shared/api';
+import { useCategories } from '@/shared/hooks/use-categories';
 import { formatSavedTime } from '@/shared/lib/date';
 import { usePostDraft } from '@/domain/post-write/hooks/use-post-draft';
 import TiptapEditor from './tiptap-editor';
@@ -19,9 +19,8 @@ function hasContent(node?: JSONContent): boolean {
 export default function PostWriteEditor() {
   const router = useRouter();
   const { form, setForm, isDirty, isReady, lastSavedAt, saveDraft, clearDraft } = usePostDraft();
+  const { data: categories = [], isLoading: loadingCategories } = useCategories();
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loadingCategories, setLoadingCategories] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -31,27 +30,6 @@ export default function PostWriteEditor() {
   const canSubmit = useMemo(() => {
     return form.title.trim().length > 0 && hasContent(form.content) && !isSubmitting;
   }, [form.title, form.content, isSubmitting]);
-
-  useEffect(() => {
-    let active = true;
-
-    async function loadCategories() {
-      try {
-        const response = await categoryApi.getAll();
-        if (!active) return;
-        setCategories(response);
-      } catch (error) {
-        console.error('Failed to load categories:', error);
-      } finally {
-        if (active) setLoadingCategories(false);
-      }
-    }
-
-    loadCategories();
-    return () => {
-      active = false;
-    };
-  }, []);
 
   useEffect(() => {
     if (!isDirty || isSubmitting) return;

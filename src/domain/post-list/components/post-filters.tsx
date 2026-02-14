@@ -1,6 +1,6 @@
 export default function PostFilters() {
   return (
-    <div className="w-full">
+    <div className="hidden w-full md:block">
       <div className="mb-1 flex items-center justify-between">
         <div className="grid w-full grid-cols-12 gap-4 font-mono text-sm font-normal tracking-wide">
           <div className="col-span-2">/ DATE</div>

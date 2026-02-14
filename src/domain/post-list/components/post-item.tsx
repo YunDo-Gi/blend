@@ -4,39 +4,48 @@ interface PostItemProps {
   id: string;
   date: string;
   title: string;
+  author: string;
 }
 
-export default function PostItem({ id, date, title }: PostItemProps) {
+export default function PostItem({ id, date, title, author }: PostItemProps) {
   return (
     <Link
       href={`/posts/${id}`}
-      className="border-line hover:bg-primary/50 group grid cursor-pointer grid-cols-12 gap-4 border-b py-4 transition-colors"
+      className="border-line group flex cursor-pointer flex-col gap-3 border-b py-4 transition-all duration-300 md:grid md:grid-cols-12 md:gap-4"
     >
-      {/* Date */}
-      <div className="text-foreground col-span-2 flex items-center font-mono text-sm">{date}</div>
+      {/* 모바일 썸네일 */}
+      <div className="bg-gray-2 aspect-video w-full transition-transform md:hidden"></div>
 
-      {/* Thumbnail placeholder */}
-      <div className="relative col-span-2 flex">
-        {/* Shadow/Background rectangle */}
-        <div 
-          className="bg-foreground aspect-image absolute w-36 opacity-0 transition-all group-hover:translate-x-2 group-hover:opacity-100"
-          style={{
-            transitionDuration: 'var(--animation-duration-toggle-theme)',
-            transitionTimingFunction: 'var(--easing-toggle-theme)'
-          }}
-        ></div>
-        {/* Main thumbnail */}
-        <div 
-          className="bg-background border-line aspect-image relative flex w-36 items-center justify-center border transition-all group-hover:-translate-y-2 group-hover:transform"
-          style={{
-            transitionDuration: 'var(--animation-duration-toggle-theme)',
-            transitionTimingFunction: 'var(--easing-toggle-theme)'
-          }}
-        ></div>
+      {/* 데스크톱 Date */}
+      <div className="text-foreground hidden font-mono text-sm md:col-span-2 md:flex md:items-center">{date}</div>
+
+      {/* 데스크톱 Thumbnail */}
+      <div className="relative col-span-2 hidden md:flex">
+        <div className="bg-primary aspect-image absolute w-36 opacity-0 transition-all duration-600 ease-out group-hover:translate-x-1 group-hover:opacity-100"></div>
+        <div className="bg-background border-line aspect-image group-hover:border-primary relative flex w-36 items-center justify-center border transition-all duration-600 ease-out group-hover:-translate-y-1"></div>
       </div>
 
-      {/* Title */}
-      <div className="text-foreground col-span-8 text-2xl">{title}</div>
+      {/* 데스크톱 Title + Author */}
+      <div className="hidden flex-col justify-between md:col-span-8 md:flex">
+        <div className="text-foreground group-hover:text-primary text-2xl transition-colors duration-300">{title}</div>
+        <div className="text-gray mt-1 font-mono text-xs">BY {author}</div>
+      </div>
+
+      {/* 모바일 Title */}
+      <div className="text-foreground group-hover:text-primary text-base font-medium transition-colors duration-300 md:hidden">
+        {title}
+      </div>
+
+      {/* 모바일 Date + Author */}
+      <div className="text-gray flex items-center gap-2 font-mono text-xs md:hidden">
+        <span>{date}</span>
+        {author && (
+          <>
+            <span>·</span>
+            <span>BY {author}</span>
+          </>
+        )}
+      </div>
     </Link>
   );
 }

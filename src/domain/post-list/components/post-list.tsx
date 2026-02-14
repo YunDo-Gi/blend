@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { postApi } from '@/shared/api';
-import { Post, Pagination as PaginationType } from '@/shared/types/api';
+import { usePosts } from '@/shared/hooks/use-posts';
 import { formatDate } from '@/shared/lib/date';
 import PostItem from './post-item';
 import Pagination from '@/shared/ui/pagination';
@@ -14,42 +13,31 @@ interface PostListProps {
 
 export default function PostList({ onTotalCountChange }: PostListProps) {
   const searchParams = useSearchParams();
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [pagination, setPagination] = useState<PaginationType | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const selectedCategory = searchParams.get('category') || '';
 
-  useEffect(() => {
-    async function fetchPosts() {
-      setLoading(true);
-      try {
-        const response = await postApi.getAll({
-          page: currentPage,
-          limit: 10,
-          category: selectedCategory || undefined,
-        });
-        setPosts(response.data);
-        setPagination(response.pagination);
-        onTotalCountChange?.(response.pagination.total);
-      } catch (error) {
-        console.error('Failed to fetch posts:', error);
-        setPosts([]);
-      } finally {
-        setLoading(false);
-      }
-    }
+  const { data, isLoading } = usePosts({
+    page: currentPage,
+    limit: 10,
+    category: selectedCategory || undefined,
+  });
 
-    fetchPosts();
-  }, [currentPage, selectedCategory, onTotalCountChange]);
+  const posts = data?.data ?? [];
+  const pagination = data?.pagination ?? null;
+
+  useEffect(() => {
+    if (pagination) {
+      onTotalCountChange?.(pagination.total);
+    }
+  }, [pagination, onTotalCountChange]);
 
   const totalPages = useMemo(() => {
     if (!pagination) return 1;
     return Math.ceil(pagination.total / pagination.limit);
   }, [pagination]);
 
-  if (loading) return null;
+  if (isLoading) return null;
 
   return (
     <div className="bg-background">
@@ -59,6 +47,7 @@ export default function PostList({ onTotalCountChange }: PostListProps) {
           id={post.id}
           date={formatDate(post.created_at)}
           title={post.title}
+          author={post.author}
         />
       ))}
 

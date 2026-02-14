@@ -32,10 +32,18 @@ function PostPageContent() {
       <PageHeader count={totalCount} />
 
       <div className="flex">
-        <CategorySidebar onCategoryChangeAction={handleCategoryChange} />
+        {/* 데스크톱 사이드바 */}
+        <div className="hidden lg:block">
+          <CategorySidebar onCategoryChangeAction={handleCategoryChange} />
+        </div>
 
         <div className="flex-1">
           <div className="p-4">
+            {/* 모바일 카테고리 */}
+            <div className="mb-4 lg:hidden">
+              <CategorySidebar onCategoryChangeAction={handleCategoryChange} mobile />
+            </div>
+
             <PostFilters />
             <PostList onTotalCountChange={setTotalCount} />
           </div>

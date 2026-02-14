@@ -1,40 +1,49 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import SectionHeader from '../../../shared/ui/section-header';
-import { categoryApi } from '@/shared/api';
-import { Category } from '@/shared/types/api';
+import SectionHeader from '@/shared/ui/section-header';
+import { useCategories } from '@/shared/hooks/use-categories';
 
 interface CategorySidebarProps {
   onCategoryChangeAction: (category: string) => void;
+  mobile?: boolean;
 }
 
-export default function CategorySidebar({ onCategoryChangeAction }: CategorySidebarProps) {
+export default function CategorySidebar({ onCategoryChangeAction, mobile = false }: CategorySidebarProps) {
   const searchParams = useSearchParams();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: categories = [], isLoading } = useCategories();
 
   const activeCategory = searchParams.get('category') || 'all';
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await categoryApi.getAll();
-        setCategories(data);
-      } catch (error) {
-        console.error('Failed to fetch categories:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   const handleCategoryClick = (categoryValue: string) => {
     onCategoryChangeAction(categoryValue);
   };
+
+  if (mobile) {
+    return (
+      <div className="flex gap-2 overflow-x-auto pb-2">
+        <button
+          onClick={() => handleCategoryClick('all')}
+          className={`border-line shrink-0 border px-3 py-1.5 font-mono text-sm transition-colors ${
+            activeCategory === 'all' ? 'bg-foreground text-background' : 'text-gray hover:text-foreground'
+          }`}
+        >
+          All
+        </button>
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => handleCategoryClick(category.id)}
+            className={`border-line shrink-0 border px-3 py-1.5 font-mono text-sm transition-colors ${
+              activeCategory === category.id ? 'bg-foreground text-background' : 'text-gray hover:text-foreground'
+            }`}
+          >
+            {category.name}
+          </button>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="w-56 p-4">

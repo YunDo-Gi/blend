@@ -4,6 +4,7 @@ import './globals.css';
 import '@/styles/highlight-theme.css';
 import { ThemeProvider } from '@/shared/providers/theme-provider';
 import { AuthProvider } from '@/domain/auth/providers/auth-provider';
+import QueryProvider from '@/shared/lib/query-provider';
 import StyledComponentsRegistry from '@/styles/registry';
 import Header from '@/domain/layout/header';
 import Footer from '@/domain/layout/footer';
@@ -27,15 +28,17 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={`${geistMono.variable}`}>
       <body suppressHydrationWarning className="bg-background text-foreground antialiased">
         <StyledComponentsRegistry>
-          <ThemeProvider attribute="class">
-            <AuthProvider>
-              <Header />
-              <div className="flex min-h-screen flex-col">
-                <main className="flex-1">{children}</main>
-              </div>
-              <Footer />
-            </AuthProvider>
-          </ThemeProvider>
+          <QueryProvider>
+            <ThemeProvider attribute="class">
+              <AuthProvider>
+                <Header />
+                <div className="flex min-h-screen flex-col">
+                  <main className="flex-1">{children}</main>
+                </div>
+                <Footer />
+              </AuthProvider>
+            </ThemeProvider>
+          </QueryProvider>
         </StyledComponentsRegistry>
       </body>
     </html>
