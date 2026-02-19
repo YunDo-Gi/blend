@@ -34,6 +34,7 @@ export interface Post {
   title: string;
   author: string;
   category: string;
+  category_id?: string;
   thumbnail: string;
   status: PostStatus;
   created_at: string;
@@ -79,7 +80,7 @@ export interface UpdateCategoryRequest {
 
 export interface CreatePostRequest {
   title: string;
-  content: JSONContent;
+  content: JSONContent | JSONContent[];
   category_id?: string;
   thumbnail?: string;
   status?: PostStatus;

@@ -13,6 +13,7 @@ import { usePostDraft, PostDraftForm } from '@/domain/post-write/hooks/use-post-
 import TiptapEditor from './tiptap-editor';
 
 type WriteMode = { type: 'new' } | { type: 'draft'; postId: string; post: Post };
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://tteokyi.com';
 
 function hasContent(node?: JSONContent): boolean {
   if (!node) return false;
@@ -21,13 +22,71 @@ function hasContent(node?: JSONContent): boolean {
   return node.content.some(hasContent);
 }
 
+function sanitizeNodeForCreate(node: JSONContent): JSONContent {
+  const { attrs, content, ...rest } = node;
+  const sanitizedAttrs =
+    attrs && typeof attrs === 'object'
+      ? Object.fromEntries(
+          Object.entries(attrs).filter(([, value]) => value !== null && value !== undefined)
+        )
+      : undefined;
+
+  return {
+    ...rest,
+    ...(sanitizedAttrs && Object.keys(sanitizedAttrs).length > 0 ? { attrs: sanitizedAttrs } : {}),
+    ...(content ? { content: content.map(sanitizeNodeForCreate) } : {}),
+  };
+}
+
+function buildCreateContentPayload(content: JSONContent): JSONContent[] {
+  if (!content.content || content.content.length === 0) return [];
+  return content.content.map(sanitizeNodeForCreate);
+}
+
+function resolveAssetUrl(url?: string | null): string {
+  if (!url) return '';
+  if (
+    url.startsWith('http://') ||
+    url.startsWith('https://') ||
+    url.startsWith('blob:') ||
+    url.startsWith('data:')
+  ) {
+    return url;
+  }
+
+  const base = API_BASE_URL.replace(/\/+$/, '');
+  const path = url.startsWith('/') ? url : `/${url}`;
+  return `${base}${path}`;
+}
+
+function normalizeContentImageUrls(node: JSONContent): JSONContent {
+  if (node.type === 'image' && typeof node.attrs?.src === 'string') {
+    return {
+      ...node,
+      attrs: {
+        ...node.attrs,
+        src: resolveAssetUrl(node.attrs.src),
+      },
+    };
+  }
+
+  if (node.content) {
+    return {
+      ...node,
+      content: node.content.map(normalizeContentImageUrls),
+    };
+  }
+
+  return node;
+}
+
 function postToForm(post: Post): PostDraftForm {
+  const tiptapContent = apiToTiptap(post.blocks);
   return {
     title: post.title,
-    // Current API returns category name on Post response, not category UUID.
-    categoryId: '',
-    thumbnail: post.thumbnail || '',
-    content: apiToTiptap(post.blocks),
+    categoryId: post.category_id ?? '',
+    thumbnail: resolveAssetUrl(post.thumbnail || ''),
+    content: normalizeContentImageUrls(tiptapContent),
   };
 }
 
@@ -254,9 +313,10 @@ export default function PostWriteEditor({ initialMode }: PostWriteEditorProps) {
       const { thumbnailUrl, finalContent } = await prepareContent();
 
       if (mode.type === 'new') {
+        const createContent = buildCreateContentPayload(finalContent);
         const created = await postApi.create({
           title: form.title.trim() || 'Untitled',
-          content: finalContent,
+          content: createContent,
           category_id: form.categoryId || undefined,
           thumbnail: thumbnailUrl || undefined,
           status: 'DRAFT',
@@ -302,9 +362,10 @@ export default function PostWriteEditor({ initialMode }: PostWriteEditorProps) {
       let postIdToRedirect: string;
 
       if (mode.type === 'new') {
+        const createContent = buildCreateContentPayload(finalContent);
         const created = await postApi.create({
           title: form.title.trim(),
-          content: finalContent,
+          content: createContent,
           category_id: form.categoryId || undefined,
           thumbnail: thumbnailUrl || undefined,
           status: 'PUBLISHED',
@@ -383,7 +444,7 @@ export default function PostWriteEditor({ initialMode }: PostWriteEditorProps) {
                 <>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={form.thumbnail}
+                    src={resolveAssetUrl(form.thumbnail)}
                     alt="Thumbnail preview"
                     className="h-full w-full object-cover"
                     onError={(e) => {

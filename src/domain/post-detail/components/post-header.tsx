@@ -38,6 +38,7 @@ export default function PostHeader({ post }: PostHeaderProps) {
               src={post.thumbnail}
               alt={post.title}
               fill
+              unoptimized
               className="object-cover grayscale transition-all duration-500 hover:grayscale-0"
             />
           </div>

@@ -70,9 +70,13 @@ function WritePageContent() {
     setSelectedMode({ type: 'new' });
   }, []);
 
-  const handleSelectServer = useCallback((post: Post) => {
-    setSelectedMode({ type: 'draft', postId: post.id, post });
-  }, []);
+  const handleSelectServer = useCallback(
+    (post: Post) => {
+      setSelectedMode(null);
+      router.replace(`/write?draft=${post.id}`);
+    },
+    [router]
+  );
 
   const handleSelectNew = useCallback(() => {
     clearLocalNewDraft();
@@ -98,7 +102,10 @@ function WritePageContent() {
         {isLoading ? (
           <div className="text-gray py-20 text-center font-mono">Loading...</div>
         ) : editorMode ? (
-          <PostWriteEditor initialMode={editorMode} />
+          <PostWriteEditor
+            key={editorMode.type === 'new' ? 'new' : `draft:${editorMode.postId}`}
+            initialMode={editorMode}
+          />
         ) : null}
 
         <DraftSelectModal

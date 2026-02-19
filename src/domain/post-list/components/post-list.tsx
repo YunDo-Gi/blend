@@ -48,6 +48,7 @@ export default function PostList({ onTotalCountChange }: PostListProps) {
           date={formatDate(post.created_at)}
           title={post.title}
           author={post.author}
+          thumbnail={post.thumbnail}
         />
       ))}
 
@@ -61,3 +62,4 @@ export default function PostList({ onTotalCountChange }: PostListProps) {
     </div>
   );
 }
+
