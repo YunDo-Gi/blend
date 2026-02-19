@@ -1,22 +1,15 @@
 import { FileUploadResponse } from '@/shared/types/api';
-
-const BASE_PATH = '/api/v1';
+import { apiClient } from './client';
 
 export const uploadApi = {
   uploadFile: async (file: File): Promise<FileUploadResponse> => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${BASE_PATH}/uploads`, {
+    return apiClient<FileUploadResponse>('/api/v1/uploads', {
       method: 'POST',
-      credentials: 'include',
       body: formData,
+      isFormData: true,
     });
-
-    if (!response.ok) {
-      throw new Error(`Upload failed: ${response.statusText}`);
-    }
-
-    return response.json();
   },
 };

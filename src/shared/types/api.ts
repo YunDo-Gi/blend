@@ -27,12 +27,15 @@ export interface PostBlockRequest {
   content: JSONContent;
 }
 
+export type PostStatus = 'DRAFT' | 'PUBLISHED';
+
 export interface Post {
   id: string;
   title: string;
   author: string;
   category: string;
   thumbnail: string;
+  status: PostStatus;
   created_at: string;
   blocks: PostBlock[];
 }
@@ -79,7 +82,15 @@ export interface CreatePostRequest {
   content: JSONContent;
   category_id?: string;
   thumbnail?: string;
-  status?: string;
+  status?: PostStatus;
+}
+
+/** 내 포스트 조회 파라미터 */
+export interface MyPostsParams {
+  status?: PostStatus;
+  category_id?: string;
+  cursor?: string;
+  limit?: number;
 }
 
 /** 포스트 메타데이터 수정 요청 (PATCH /post/{id}) */
@@ -87,7 +98,7 @@ export interface UpdatePostRequest {
   title?: string;
   category_id?: string;
   thumbnail?: string;
-  status?: string;
+  status?: PostStatus;
 }
 
 /** 포스트 본문 수정 요청 (PUT /post/{id}/content) */

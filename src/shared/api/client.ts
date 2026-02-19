@@ -16,25 +16,31 @@ type RequestOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
   headers?: HeadersInit;
+  isFormData?: boolean;
 };
 
-export async function apiClient<T>(
-  endpoint: string,
-  options: RequestOptions = {},
-): Promise<T> {
-  const { method = 'GET', body, headers } = options;
+export async function apiClient<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
+  const { method = 'GET', body, headers, isFormData } = options;
 
   const config: RequestInit = {
     method,
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers,
-    },
   };
 
-  if (body) {
-    config.body = JSON.stringify(body);
+  // FormData일 때는 headers를 설정하지 않아야 브라우저가 Content-Type을 자동 설정
+  if (isFormData) {
+    if (headers) {
+      config.headers = headers;
+    }
+    config.body = body as FormData;
+  } else {
+    config.headers = {
+      'Content-Type': 'application/json',
+      ...headers,
+    };
+    if (body) {
+      config.body = JSON.stringify(body);
+    }
   }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);

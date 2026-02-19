@@ -5,6 +5,7 @@ import {
   CreatePostRequest,
   UpdatePostRequest,
   UpdatePostContentRequest,
+  MyPostsParams,
 } from '@/shared/types/api';
 
 const BASE_PATH = '/api/v1/post';
@@ -27,6 +28,18 @@ export const postApi = {
   },
 
   getById: (id: string) => apiClient<Post>(`${BASE_PATH}/${id}`),
+
+  /** 내 포스트 조회 (GET /post/me) */
+  getMyPosts: (params: MyPostsParams = {}) => {
+    const searchParams = new URLSearchParams();
+    if (params.status) searchParams.set('status', params.status);
+    if (params.category_id) searchParams.set('category_id', params.category_id);
+    if (params.cursor) searchParams.set('cursor', params.cursor);
+    if (params.limit) searchParams.set('limit', String(params.limit));
+
+    const query = searchParams.toString();
+    return apiClient<PostListResponse>(`${BASE_PATH}/me${query ? `?${query}` : ''}`);
+  },
 
   create: (data: CreatePostRequest) =>
     apiClient<Post>(BASE_PATH, {

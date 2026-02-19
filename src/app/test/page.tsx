@@ -394,6 +394,7 @@ const testPost: Post = {
   author: 'YUNCHEOL KWAK',
   category: 'Backend',
   thumbnail: '/images/lcw-chair.png',
+  status: 'PUBLISHED',
   created_at: '2025-01-26T00:00:00Z',
   blocks: testBlocks,
 };

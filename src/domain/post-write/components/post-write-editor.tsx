@@ -1,13 +1,18 @@
 'use client';
 
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { JSONContent } from '@tiptap/react';
+import { toast } from 'sonner';
 import { postApi, uploadApi, ApiException } from '@/shared/api';
+import { Post, PostStatus } from '@/shared/types/api';
 import { useCategories } from '@/shared/hooks/use-categories';
 import { formatSavedTime } from '@/shared/lib/date';
-import { usePostDraft } from '@/domain/post-write/hooks/use-post-draft';
+import { apiToTiptap, tiptapToApi } from '@/shared/lib/block-transform';
+import { usePostDraft, PostDraftForm } from '@/domain/post-write/hooks/use-post-draft';
 import TiptapEditor from './tiptap-editor';
+
+type WriteMode = { type: 'new' } | { type: 'draft'; postId: string; post: Post };
 
 function hasContent(node?: JSONContent): boolean {
   if (!node) return false;
@@ -16,19 +21,53 @@ function hasContent(node?: JSONContent): boolean {
   return node.content.some(hasContent);
 }
 
-export default function PostWriteEditor() {
+function postToForm(post: Post): PostDraftForm {
+  return {
+    title: post.title,
+    // Current API returns category name on Post response, not category UUID.
+    categoryId: '',
+    thumbnail: post.thumbnail || '',
+    content: apiToTiptap(post.blocks),
+  };
+}
+
+interface PostWriteEditorProps {
+  initialMode: WriteMode;
+}
+
+export default function PostWriteEditor({ initialMode }: PostWriteEditorProps) {
   const router = useRouter();
-  const { form, setForm, isDirty, isReady, lastSavedAt, saveDraft, clearDraft } = usePostDraft();
+  const [mode, setMode] = useState<WriteMode>(initialMode);
+
+  const initialForm = useMemo(() => {
+    if (mode.type !== 'new' && mode.post) {
+      return postToForm(mode.post);
+    }
+    return undefined;
+  }, [mode]);
+
+  const postId = mode.type === 'new' ? undefined : mode.postId;
+  const { form, setForm, isDirty, isReady, lastSavedAt, clearDraft, migrateToServerDraft } = usePostDraft({
+    postId,
+    initialForm,
+  });
   const { data: categories = [], isLoading: loadingCategories } = useCategories();
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [pendingImages, setPendingImages] = useState<Map<string, File>>(new Map());
+  const blobUrlsRef = useRef<Set<string>>(new Set());
 
+  const isSubmitting = isSavingDraft || isPublishing;
   const canSubmit = useMemo(() => {
     return form.title.trim().length > 0 && hasContent(form.content) && !isSubmitting;
+  }, [form.title, form.content, isSubmitting]);
+
+  const canSaveDraft = useMemo(() => {
+    return (form.title.trim().length > 0 || hasContent(form.content)) && !isSubmitting;
   }, [form.title, form.content, isSubmitting]);
 
   useEffect(() => {
@@ -36,7 +75,6 @@ export default function PostWriteEditor() {
 
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
-      // returnValue is required for Chrome compatibility
       event.returnValue = '';
     };
 
@@ -46,17 +84,14 @@ export default function PostWriteEditor() {
     };
   }, [isDirty, isSubmitting]);
 
-  // Cleanup blob URLs on unmount
   useEffect(() => {
+    const blobUrls = blobUrlsRef.current;
     return () => {
-      if (form.thumbnail.startsWith('blob:')) {
-        URL.revokeObjectURL(form.thumbnail);
-      }
-      pendingImages.forEach((_, blobUrl) => {
+      blobUrls.forEach((blobUrl) => {
         URL.revokeObjectURL(blobUrl);
       });
+      blobUrls.clear();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onChangeField =
@@ -71,93 +106,51 @@ export default function PostWriteEditor() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       setErrorMessage('이미지 파일만 업로드할 수 있습니다.');
       return;
     }
 
-    // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
       setErrorMessage('파일 크기는 10MB 이하여야 합니다.');
       return;
     }
 
+    if (form.thumbnail.startsWith('blob:')) {
+      URL.revokeObjectURL(form.thumbnail);
+      blobUrlsRef.current.delete(form.thumbnail);
+    }
+
     setErrorMessage(null);
 
-    // Create blob URL for preview
     const blobUrl = URL.createObjectURL(file);
+    blobUrlsRef.current.add(blobUrl);
     setThumbnailFile(file);
     setForm((prev) => ({ ...prev, thumbnail: blobUrl }));
 
-    // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
-  const handleSubmit = async () => {
-    if (!canSubmit) return;
-
-    setIsSubmitting(true);
-    setErrorMessage(null);
-
-    try {
-      // 1. Upload thumbnail if file exists
-      let thumbnailUrl = form.thumbnail.trim();
-      if (thumbnailFile && thumbnailUrl.startsWith('blob:')) {
-        const response = await uploadApi.uploadFile(thumbnailFile);
-        thumbnailUrl = response.url;
-        URL.revokeObjectURL(form.thumbnail); // Clean up blob URL
-      }
-
-      // 2. Upload pending images from editor
-      let finalContent = form.content;
-      if (pendingImages.size > 0) {
-        finalContent = await uploadPendingImages(form.content);
-      }
-
-      // 3. Create post
-      const created = await postApi.create({
-        title: form.title.trim(),
-        content: finalContent,
-        category_id: form.categoryId || undefined,
-        thumbnail: thumbnailUrl || undefined,
-      });
-
-      // Clean up
-      setThumbnailFile(null);
-      setPendingImages(new Map());
-      clearDraft();
-      router.push(`/posts/${created.id}`);
-    } catch (error) {
-      if (error instanceof ApiException) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage('게시글 생성 중 오류가 발생했습니다.');
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Helper function to upload pending images and replace blob URLs
   const uploadPendingImages = async (content: JSONContent): Promise<JSONContent> => {
+    const entries = Array.from(pendingImages.entries());
+    if (entries.length === 0) {
+      return content;
+    }
+
     const urlMap = new Map<string, string>();
 
-    // Upload all pending images
-    for (const [blobUrl, file] of pendingImages.entries()) {
+    for (const [blobUrl, file] of entries) {
       try {
         const response = await uploadApi.uploadFile(file);
         urlMap.set(blobUrl, response.url);
-        URL.revokeObjectURL(blobUrl); // Clean up blob URL
       } catch (error) {
         console.error('Failed to upload image:', error);
         throw new Error('이미지 업로드에 실패했습니다.');
       }
     }
 
-    // Replace blob URLs in content
     const replaceUrls = (node: JSONContent): JSONContent => {
       if (node.type === 'image' && node.attrs?.src) {
         const newSrc = urlMap.get(node.attrs.src);
@@ -182,18 +175,178 @@ export default function PostWriteEditor() {
       return node;
     };
 
-    return replaceUrls(content);
+    const replaced = replaceUrls(content);
+
+    entries.forEach(([blobUrl]) => {
+      URL.revokeObjectURL(blobUrl);
+      blobUrlsRef.current.delete(blobUrl);
+    });
+
+    return replaced;
+  };
+
+  const prepareContent = async () => {
+    let thumbnailUrl = form.thumbnail.trim();
+    let hasUploadedThumbnail = false;
+
+    if (thumbnailFile && thumbnailUrl.startsWith('blob:')) {
+      const response = await uploadApi.uploadFile(thumbnailFile);
+      thumbnailUrl = response.url;
+      URL.revokeObjectURL(form.thumbnail);
+      blobUrlsRef.current.delete(form.thumbnail);
+      hasUploadedThumbnail = true;
+    }
+
+    const hasPendingInlineImages = pendingImages.size > 0;
+    let finalContent = form.content;
+    if (hasPendingInlineImages) {
+      finalContent = await uploadPendingImages(form.content);
+    }
+
+    if (hasUploadedThumbnail || hasPendingInlineImages) {
+      setForm((prev) => ({
+        ...prev,
+        thumbnail: thumbnailUrl,
+        content: finalContent,
+      }));
+      setThumbnailFile(null);
+      if (hasPendingInlineImages) {
+        setPendingImages(new Map());
+      }
+    }
+
+    return { thumbnailUrl, finalContent };
+  };
+
+  const updateExistingPost = async ({
+    postId: targetPostId,
+    title,
+    thumbnailUrl,
+    finalContent,
+    status,
+  }: {
+    postId: string;
+    title: string;
+    thumbnailUrl: string;
+    finalContent: JSONContent;
+    status?: PostStatus;
+  }) => {
+    // Keep publish transition safer: update content first, then metadata/status.
+    await postApi.updateContent(targetPostId, {
+      blocks: tiptapToApi(finalContent),
+    });
+
+    await postApi.update(targetPostId, {
+      title,
+      category_id: form.categoryId || undefined,
+      thumbnail: thumbnailUrl || undefined,
+      ...(status ? { status } : {}),
+    });
+  };
+
+  const handleSaveDraft = async () => {
+    if (!canSaveDraft) return;
+
+    setIsSavingDraft(true);
+    setErrorMessage(null);
+
+    try {
+      const { thumbnailUrl, finalContent } = await prepareContent();
+
+      if (mode.type === 'new') {
+        const created = await postApi.create({
+          title: form.title.trim() || 'Untitled',
+          content: finalContent,
+          category_id: form.categoryId || undefined,
+          thumbnail: thumbnailUrl || undefined,
+          status: 'DRAFT',
+        });
+
+        migrateToServerDraft();
+        setMode({ type: 'draft', postId: created.id, post: created });
+        router.replace(`/write?draft=${created.id}`);
+      } else {
+        await updateExistingPost({
+          postId: mode.postId,
+          title: form.title.trim() || 'Untitled',
+          thumbnailUrl,
+          finalContent,
+        });
+      }
+
+      setThumbnailFile(null);
+      setPendingImages(new Map());
+      toast.success('Draft saved');
+    } catch (error) {
+      if (error instanceof ApiException) {
+        setErrorMessage(error.message);
+        toast.error(error.message);
+      } else {
+        setErrorMessage('An error occurred while saving draft.');
+        toast.error('An error occurred while saving draft.');
+      }
+    } finally {
+      setIsSavingDraft(false);
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!canSubmit) return;
+
+    setIsPublishing(true);
+    setErrorMessage(null);
+
+    try {
+      const { thumbnailUrl, finalContent } = await prepareContent();
+
+      let postIdToRedirect: string;
+
+      if (mode.type === 'new') {
+        const created = await postApi.create({
+          title: form.title.trim(),
+          content: finalContent,
+          category_id: form.categoryId || undefined,
+          thumbnail: thumbnailUrl || undefined,
+          status: 'PUBLISHED',
+        });
+        postIdToRedirect = created.id;
+        migrateToServerDraft();
+      } else {
+        await updateExistingPost({
+          postId: mode.postId,
+          title: form.title.trim(),
+          thumbnailUrl,
+          finalContent,
+          status: 'PUBLISHED',
+        });
+        postIdToRedirect = mode.postId;
+      }
+
+      setThumbnailFile(null);
+      setPendingImages(new Map());
+      clearDraft();
+      router.push(`/posts/${postIdToRedirect}`);
+    } catch (error) {
+      if (error instanceof ApiException) {
+        setErrorMessage(error.message);
+        toast.error(error.message);
+      } else {
+        setErrorMessage('An error occurred while publishing.');
+        toast.error('An error occurred while publishing.');
+      }
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   return (
     <section className="flex flex-col gap-6 pb-16">
       <header className="border-line bg-background border p-4">
-        <div className="mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <h2 className="text-foreground font-mono text-sm">/ META</h2>
         </div>
 
         <div className="flex flex-col gap-6 md:flex-row">
-          {/* 왼쪽: TITLE, CATEGORY */}
           <div className="flex flex-1 flex-col gap-4">
             <label className="block space-y-2">
               <span className="text-gray-foreground font-mono text-xs">TITLE</span>
@@ -223,7 +376,6 @@ export default function PostWriteEditor() {
             </label>
           </div>
 
-          {/* 오른쪽: THUMBNAIL */}
           <div className="w-full space-y-2 md:w-80">
             <span className="text-gray-foreground font-mono text-xs">THUMBNAIL</span>
             <div className="border-line bg-gray-2/30 relative flex aspect-video items-center justify-center border">
@@ -244,6 +396,7 @@ export default function PostWriteEditor() {
                     onClick={() => {
                       if (form.thumbnail.startsWith('blob:')) {
                         URL.revokeObjectURL(form.thumbnail);
+                        blobUrlsRef.current.delete(form.thumbnail);
                       }
                       setThumbnailFile(null);
                       setForm((prev) => ({ ...prev, thumbnail: '' }));
@@ -294,13 +447,12 @@ export default function PostWriteEditor() {
           content={form.content}
           onChange={(content) => setForm((prev) => ({ ...prev, content }))}
           onImageAdded={(blobUrl, file) => {
+            blobUrlsRef.current.add(blobUrl);
             setPendingImages((prev) => new Map(prev).set(blobUrl, file));
           }}
-          placeholder="'/'를 입력하여 명령어 사용..."
         />
       </div>
 
-      {/* 하단 바 - 화면 하단에 고정 */}
       <div className="border-line bg-background fixed right-0 bottom-0 left-0 border-t">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="text-gray-foreground font-mono text-xs">
@@ -311,19 +463,19 @@ export default function PostWriteEditor() {
             {errorMessage && <p className="font-mono text-xs text-red-500">{errorMessage}</p>}
             <button
               type="button"
-              onClick={saveDraft}
-              disabled={!isDirty}
+              onClick={handleSaveDraft}
+              disabled={!canSaveDraft}
               className="border-line text-foreground hover:bg-gray-2 border px-4 py-2 font-mono text-sm transition-colors disabled:opacity-40"
             >
-              SAVE DRAFT
+              {isSavingDraft ? 'SAVING...' : 'SAVE DRAFT'}
             </button>
             <button
               type="button"
-              onClick={handleSubmit}
+              onClick={handlePublish}
               disabled={!canSubmit}
               className="bg-foreground text-background hover:bg-foreground/80 px-6 py-2 font-mono text-sm transition-colors disabled:opacity-40"
             >
-              {isSubmitting ? 'PUBLISHING...' : 'PUBLISH'}
+              {isPublishing ? 'PUBLISHING...' : 'PUBLISH'}
             </button>
           </div>
         </div>
