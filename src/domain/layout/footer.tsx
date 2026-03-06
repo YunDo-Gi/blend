@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowRightIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -7,6 +8,7 @@ const HIDDEN_PATHS = ['/write', '/settings'];
 
 export default function Footer() {
   const pathname = usePathname();
+  const currentYear = new Date().getFullYear();
 
   if (HIDDEN_PATHS.some((path) => pathname.startsWith(path))) {
     return null;
@@ -14,87 +16,28 @@ export default function Footer() {
 
   return (
     <footer className="border-line bg-background border-t">
-      <div className="border-line mx-auto max-w-7xl border-x p-(--layout-grid-padding)">
-        <div className="flex flex-col gap-6 py-8 md:flex-row md:items-center md:justify-between">
-          {/* Logo/Brand */}
-          <div className="flex flex-col gap-2">
-            <h2 className="font-serif text-2xl font-bold">Blend</h2>
-            <p className="text-sm text-gray-600">Mix Thoughts, Blend</p>
+      <div className="lg:border-line mx-auto max-w-7xl px-4 py-4">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-6">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <p className="font-serif text-[1.05rem] leading-[1.1] tracking-[-0.03em] md:text-[1.2rem]">
+              Blend archives notes, drafts, and unfinished thoughts.
+            </p>
           </div>
 
-          {/* Links */}
-          <div className="flex flex-col gap-4 md:flex-row md:gap-8">
-            <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-medium">Navigation</h3>
-              <ul className="space-y-1 text-xs text-gray-600">
-                <li>
-                  <Link href="/" className="hover:text-primary transition-colors">
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/about" className="hover:text-primary transition-colors">
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/posts" className="hover:text-primary transition-colors">
-                    Posts
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="hover:text-primary transition-colors">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-medium">Social</h3>
-              <ul className="space-y-1 text-xs text-gray-600">
-                <li>
-                  <a
-                    href="https://github.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-primary transition-colors"
-                  >
-                    GitHub
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://twitter.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-primary transition-colors"
-                  >
-                    Twitter
-                  </a>
-                </li>
-                <li>
-                  <a href="mailto:contact@blend.com" className="hover:text-primary transition-colors">
-                    Email
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Section */}
-        <div className="border-line border-t pt-6 pb-4">
-          <div className="flex flex-col gap-2 text-xs text-gray-500 md:flex-row md:items-center md:justify-between">
-            <p>&copy; 2025 Blend. All rights reserved.</p>
-            <div className="flex gap-4">
-              <Link href="/privacy" className="hover:text-primary transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="hover:text-primary transition-colors">
-                Terms of Service
-              </Link>
-            </div>
+          <div className="flex items-center justify-between gap-4 md:justify-end">
+            <span className="text-gray-foreground font-mono text-[11px] tracking-[0.14em] uppercase">
+              &copy; {currentYear}
+            </span>
+            <Link
+              href="/posts"
+              className="group hover:text-primary inline-flex items-center gap-1.5 font-mono text-[11px] tracking-[0.18em] uppercase transition-colors md:text-xs"
+            >
+              <span>All Posts</span>
+              <ArrowRightIcon
+                aria-hidden="true"
+                className="text-foreground/60 group-hover:text-primary h-4 w-4 transition-colors"
+              />
+            </Link>
           </div>
         </div>
       </div>
