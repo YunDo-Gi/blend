@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { Geist_Mono } from 'next/font/google';
+import type { CSSProperties } from 'react';
+import { Geist_Mono, Space_Grotesk } from 'next/font/google';
 import { Toaster } from 'sonner';
 import './globals.css';
 import '@/styles/highlight-theme.css';
@@ -15,6 +16,12 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+const spaceGrotesk = Space_Grotesk({
+  variable: '--font-space-grotesk',
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+});
+
 export const metadata: Metadata = {
   title: 'Blend',
   description: 'Developer Blog',
@@ -25,8 +32,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const fontVariables = {
+    '--font-serif': spaceGrotesk.style.fontFamily,
+    '--font-heading': spaceGrotesk.style.fontFamily,
+  } as CSSProperties;
+
   return (
-    <html lang="en" suppressHydrationWarning className={`${geistMono.variable}`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geistMono.variable} ${spaceGrotesk.variable}`}
+      style={fontVariables}
+    >
       <body suppressHydrationWarning className="bg-background text-foreground antialiased">
         <StyledComponentsRegistry>
           <QueryProvider>

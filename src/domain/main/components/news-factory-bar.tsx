@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 import Link from 'next/link';
 import PostSearchForm from '@/shared/ui/post-search-form';
@@ -16,20 +17,21 @@ export default function NewsFactoryBar() {
             <PostSearchForm variant="compact-trigger" onTriggerAction={() => setIsSearchOpen(true)} />
           </div>
 
-          <div className="border-line flex items-center justify-center border-t px-4 py-6 text-center font-serif text-3xl leading-none tracking-[0.04em] uppercase md:border-t-0 md:px-8 md:text-[2.35rem]">
-            BLEND, MIX THOUGHTS
+          <div className="border-line flex items-center justify-center border-t px-4 py-6 text-center font-serif text-3xl leading-none font-semibold tracking-[0.04em] md:border-t-0 md:px-8 md:text-[2.35rem]">
+            Mix thoughts, BLEND
           </div>
 
           <div className="border-line flex items-center justify-end border-t px-4 py-3 md:h-full md:border-t-0 md:border-l md:px-6">
             <Link
               href="/posts"
               aria-label="Go to the post index"
-              className="group text-muted-foreground hover:text-primary inline-flex shrink-0 items-center gap-1.5 font-mono text-xs font-medium tracking-[0.18em] uppercase transition-colors md:text-[13px]"
+              className="group text-muted-foreground hover:text-primary inline-flex shrink-0 items-center gap-1.5 font-serif text-xs font-medium tracking-[0.18em] uppercase transition-colors md:text-[13px]"
             >
               <span>All Posts</span>
-              <span aria-hidden="true" className="text-foreground/60 group-hover:text-primary transition-colors">
-                →
-              </span>
+              <ArrowRightIcon
+                aria-hidden="true"
+                className="text-foreground/60 group-hover:text-primary h-4 w-4 transition-colors"
+              />
             </Link>
           </div>
         </div>

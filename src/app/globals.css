@@ -5,50 +5,54 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #f8f8f5;
-  --foreground: #1f1f1e;
-  --code-block-bg: #f7f7f5;
-  --code-block-border: #e6e6e2;
+  --background: #e0d8d0;
+  --foreground: #323232;
+  --code-block-bg: #d6cec5;
+  --code-block-border: #b7aea5;
 }
 
 @theme {
-  --color-background: #f8f8f5;
-  --color-foreground: #1f1f1e;
-  --color-foreground-light: #3e3e3c;
-  --color-line: #cfcfcc;
-  --color-primary: #04e762;
-  --color-gray: #a8a8a6;
-  --color-gray-foreground: #5f5f5e;
-  --color-gray-light: #838381;
-  --color-gray-2: #e4e4e1;
+  --color-background: #e0d8d0;
+  --color-foreground: #323232;
+  --color-foreground-light: #4b4743;
+  --color-line: #7b746d;
+  --color-primary: #4f9447;
+  --color-gray: #989087;
+  --color-gray-foreground: #666059;
+  --color-gray-light: #b8afa6;
+  --color-gray-2: #d2cabf;
 
   --layout-grid-padding: 1rem;
   --animation-duration-toggle-theme: 0ms;
   --easing-toggle-theme: linear;
 
   /* Font families */
-  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-serif: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
   --font-sans:
     'Pretendard Variable', Pretendard, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   --font-mono:
     var(--font-geist-mono), ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
-  --font-heading: 'Pretendard Variable', Pretendard, ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-space-grotesk), 'Pretendard Variable', Pretendard, ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Pretendard Variable', Pretendard, ui-sans-serif, system-ui, sans-serif;
 
   --aspect-image: 16 / 10;
 }
 
 .dark {
-  --color-background: #1f1f1e;
-  --color-foreground: #f8f8f5;
-  --color-line: #3e3e3d;
-  --color-primary: #04e762;
-  --color-gray-foreground: #cfcfcc;
-  --color-gray-light: #3e3e3d;
-  --color-gray-2: #3a3a38;
-  --code-block-bg: #2b2d31;
-  --code-block-border: #3d4148;
+  --background: #262321;
+  --foreground: #e3dbd3;
+  --color-background: #262321;
+  --color-foreground: #e3dbd3;
+  --color-foreground-light: #c7beb6;
+  --color-line: #5f5851;
+  --color-primary: #7ecf6d;
+  --color-gray: #8f857c;
+  --color-gray-foreground: #b9afa6;
+  --color-gray-light: #4a443f;
+  --color-gray-2: #312d2a;
+  --code-block-bg: #2d2926;
+  --code-block-border: #4f4943;
 }
 
 body {
