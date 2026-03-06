@@ -1,47 +1,86 @@
-import SectionHeader from '../../../shared/ui/section-header';
+'use client';
 
-interface RecentPost {
-  id: number;
-  title: string;
-  content: string;
-  date: string;
-  author: string;
-  image?: string;
+import Image from 'next/image';
+import Link from 'next/link';
+import SectionHeader from '@/shared/ui/section-header';
+import { formatDate } from '@/shared/lib/date';
+import { useRecentPost } from '@/domain/main/hooks/use-recent-post';
+
+function RecentSectionSkeleton() {
+  return (
+    <div className="flex flex-col gap-4 pb-(--layout-grid-padding) lg:flex-row lg:gap-8">
+      <div className="bg-gray-2/35 aspect-image w-full shrink-0 animate-pulse lg:w-72" />
+      <div className="flex flex-1 flex-col justify-between gap-4">
+        <div className="bg-gray-2/35 h-7 w-3/4 animate-pulse" />
+        <div className="space-y-2">
+          <div className="bg-gray-2/25 h-3 w-full animate-pulse" />
+          <div className="bg-gray-2/25 h-3 w-5/6 animate-pulse" />
+          <div className="bg-gray-2/25 h-3 w-2/3 animate-pulse" />
+        </div>
+        <div className="bg-gray-2/25 h-3 w-40 animate-pulse" />
+      </div>
+    </div>
+  );
 }
 
-const recentPosts: RecentPost[] = [
-  {
-    id: 1,
-    title: '글 제목이 들어가는 공간입니다. 제목을 입력해주세요.',
-    content:
-      '그러나, 겨울이 지나고 나의 별에도 봄이 오면, 무덤 위에 파란 잔디가 피어나듯이 내 이름자 묻힌 언덕 위에도 자랑처럼 풀이 무성할 거다다. 계절이 지나가는 하늘에는...',
-    date: '2025.06.05',
-    author: 'MINSEOK KIM',
-  },
-];
+function RecentSectionEmpty() {
+  return (
+    <div className="text-gray-foreground pb-(--layout-grid-padding) font-mono text-xs tracking-[0.08em] uppercase">
+      No published posts yet.
+    </div>
+  );
+}
 
 export default function RecentSection() {
-  const currentPost = recentPosts[0];
+  const { recentPost, thumbnailUrl, excerpt, isLoading, isEmpty } = useRecentPost();
 
   return (
     <>
-      <SectionHeader title="/ RECENT" />
+      <SectionHeader title="RECENT" />
 
-      <div className="group flex cursor-pointer flex-col gap-4 pb-(--layout-grid-padding) lg:flex-row lg:gap-8">
-        <div className="border-foreground aspect-image group-hover:border-primary w-full shrink-0 border lg:w-72"></div>
-
-        <div className="flex flex-1 flex-col content-between justify-between gap-3 lg:gap-0">
-          <h3 className="text-lg leading-relaxed font-medium">{currentPost.title}</h3>
-
-          <p className="text-gray-foreground text-xs leading-relaxed">{currentPost.content}</p>
-
-          <div className="text-gray-foreground flex items-center gap-2 font-mono text-xs">
-            <span>{currentPost.date}</span>
-            <span>•</span>
-            <span>{currentPost.author}</span>
+      {isLoading ? (
+        <RecentSectionSkeleton />
+      ) : isEmpty || !recentPost ? (
+        <RecentSectionEmpty />
+      ) : (
+        <Link
+          href={`/posts/${recentPost.id}`}
+          className="group flex cursor-pointer flex-col gap-4 pb-(--layout-grid-padding) lg:flex-row lg:gap-6"
+        >
+          <div className="border-line/80 aspect-image group-hover:border-primary/80 relative w-full shrink-0 overflow-hidden border transition-colors lg:w-72">
+            {thumbnailUrl ? (
+              <Image
+                src={thumbnailUrl}
+                alt={recentPost.title}
+                fill
+                sizes="(min-width: 1024px) 18rem, 100vw"
+                unoptimized
+                className="object-cover"
+              />
+            ) : null}
           </div>
-        </div>
-      </div>
+
+          <div className="flex flex-1 flex-col content-between justify-between gap-3 lg:gap-0">
+            <div>
+              <h3 className="group-hover:text-primary mb-2 text-2xl leading-relaxed font-medium transition-colors">
+                {recentPost.title}
+              </h3>
+
+              <p className="text-gray-foreground text-xs leading-relaxed">{excerpt}</p>
+            </div>
+
+            <div className="text-gray-foreground flex items-center gap-2 font-mono text-xs">
+              <span>{formatDate(recentPost.created_at)}</span>
+              {recentPost.author ? (
+                <>
+                  <span>•</span>
+                  <span>{recentPost.author}</span>
+                </>
+              ) : null}
+            </div>
+          </div>
+        </Link>
+      )}
     </>
   );
 }

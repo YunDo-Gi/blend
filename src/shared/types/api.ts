@@ -29,7 +29,7 @@ export interface PostBlockRequest {
 
 export type PostStatus = 'DRAFT' | 'PUBLISHED';
 
-export interface Post {
+export interface PostSummary {
   id: string;
   title: string;
   author: string;
@@ -38,6 +38,9 @@ export interface Post {
   thumbnail: string;
   status: PostStatus;
   created_at: string;
+}
+
+export interface Post extends PostSummary {
   blocks: PostBlock[];
 }
 
@@ -59,7 +62,7 @@ export interface Pagination {
 }
 
 export interface PostListResponse {
-  data: Post[];
+  data: PostSummary[];
   pagination: Pagination;
 }
 
