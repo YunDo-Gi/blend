@@ -1,3 +1,4 @@
+import { ArrowRightIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 
 export default function HeroSection() {
@@ -12,9 +13,10 @@ export default function HeroSection() {
         </p>
         <Link
           href="/posts"
-          className="text-foreground border-foreground hover:bg-primary/75 shrink-0 border border-dotted px-4 py-2 font-mono text-sm font-medium transition-colors md:px-6 md:py-3 md:text-base"
+          className="text-foreground border-foreground hover:bg-primary/75 inline-flex shrink-0 items-center gap-2 border border-dotted px-4 py-2 font-mono text-sm font-medium transition-colors md:px-6 md:py-3 md:text-base"
         >
-          VIEW POSTS →
+          <span>VIEW POSTS</span>
+          <ArrowRightIcon aria-hidden="true" className="h-4 w-4" />
         </Link>
       </div>
     </section>

@@ -1,5 +1,6 @@
 'use client';
 
+import { ChevronUpIcon } from '@radix-ui/react-icons';
 import { useState, useEffect } from 'react';
 import { TocItem } from '@/shared/lib/toc';
 import SectionHeader from '@/shared/ui/section-header';
@@ -62,14 +63,7 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
             {activeId ? toc.find((item) => item.id === activeId)?.title || '목차' : '목차'}
           </span>
         </div>
-        <svg
-          className={`text-gray h-4 w-4 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-        </svg>
+        <ChevronUpIcon className={`text-gray h-4 w-4 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* 데스크톱 TOC */}

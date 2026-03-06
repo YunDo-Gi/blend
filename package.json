@@ -11,6 +11,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@radix-ui/react-icons": "^1.3.2",
     "@tanstack/react-query": "^5.90.21",
     "@tiptap/extension-code-block-lowlight": "^3.19.0",
     "@tiptap/extension-file-handler": "^3.19.0",

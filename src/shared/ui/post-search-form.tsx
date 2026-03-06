@@ -1,5 +1,6 @@
 'use client';
 
+import { MagnifyingGlassIcon } from '@radix-ui/react-icons';
 import { type FormEvent, useEffect, useId, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -10,15 +11,6 @@ interface PostSearchFormProps {
   autoFocus?: boolean;
   onSubmitAction?: () => void;
   onTriggerAction?: () => void;
-}
-
-function SearchIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M16 16L21 21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
 }
 
 export default function PostSearchForm({
@@ -75,7 +67,7 @@ export default function PostSearchForm({
           className="text-gray-foreground hover:text-foreground flex shrink-0 items-center transition-colors"
           aria-label="Search posts"
         >
-          <SearchIcon className="h-4 w-4 md:h-[1.125rem] md:w-[1.125rem]" />
+          <MagnifyingGlassIcon className="h-4 w-4 md:h-[1.125rem] md:w-[1.125rem]" />
         </button>
         <input
           id={inputId}
@@ -101,7 +93,7 @@ export default function PostSearchForm({
         aria-label="Open post search"
         aria-haspopup="dialog"
       >
-        <SearchIcon className="text-gray-foreground h-[1.125rem] w-[1.125rem] md:h-5 md:w-5" />
+        <MagnifyingGlassIcon className="text-gray-foreground h-[1.125rem] w-[1.125rem] md:h-5 md:w-5" />
         <span className="text-gray-foreground/80 min-w-0 flex-1 truncate font-mono text-xs tracking-[0.18em] md:text-[13px]">
           SEARCH POSTS
         </span>
@@ -123,7 +115,7 @@ export default function PostSearchForm({
           className="text-gray-foreground hover:text-foreground flex shrink-0 items-center transition-colors"
           aria-label="Search posts"
         >
-          <SearchIcon className="h-4 w-4" />
+          <MagnifyingGlassIcon className="h-4 w-4" />
         </button>
         <input
           id={inputId}
@@ -156,7 +148,7 @@ export default function PostSearchForm({
             className="text-gray-foreground hover:text-foreground flex shrink-0 items-center transition-colors"
             aria-label="Search posts"
           >
-            <SearchIcon className="h-5 w-5" />
+            <MagnifyingGlassIcon className="h-5 w-5" />
           </button>
           <label htmlFor={inputId} className="sr-only">
             Search posts by title
@@ -192,7 +184,7 @@ export default function PostSearchForm({
           Search posts by title
         </label>
         <div className="border-line flex min-w-0 flex-1 items-center gap-3 border px-3 py-3">
-          <SearchIcon className="text-gray-foreground h-4 w-4 shrink-0" />
+          <MagnifyingGlassIcon className="text-gray-foreground h-4 w-4 shrink-0" />
           <input
             id={inputId}
             type="search"

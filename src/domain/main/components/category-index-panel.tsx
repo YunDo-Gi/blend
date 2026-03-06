@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 import { useCategories } from '@/shared/hooks/use-categories';
 
@@ -15,9 +16,7 @@ export default function CategoryIndexPanel() {
           Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="flex items-center justify-between px-3 py-2.5">
               <div className="bg-line h-3.5 w-20 animate-pulse" />
-              <span aria-hidden="true" className="text-gray-foreground">
-                ↗
-              </span>
+              <ArrowTopRightIcon aria-hidden="true" className="text-gray-foreground h-4 w-4" />
             </div>
           ))
         ) : categories.length > 0 ? (
@@ -30,12 +29,10 @@ export default function CategoryIndexPanel() {
               <span className="group-hover:text-primary truncate font-serif text-[1.05rem] leading-none tracking-[-0.03em] lowercase transition-colors">
                 {category.name}
               </span>
-              <span
+              <ArrowTopRightIcon
                 aria-hidden="true"
-                className="text-gray-foreground group-hover:text-primary font-mono text-sm transition-colors"
-              >
-                ↗
-              </span>
+                className="text-gray-foreground group-hover:text-primary h-4 w-4 transition-colors"
+              />
             </Link>
           ))
         ) : (
@@ -46,12 +43,10 @@ export default function CategoryIndexPanel() {
             <span className="group-hover:text-primary truncate font-serif text-[1.05rem] leading-none tracking-[-0.03em] lowercase transition-colors">
               all posts
             </span>
-            <span
+            <ArrowTopRightIcon
               aria-hidden="true"
-              className="text-gray-foreground group-hover:text-primary font-mono text-sm transition-colors"
-            >
-              ↗
-            </span>
+              className="text-gray-foreground group-hover:text-primary h-4 w-4 transition-colors"
+            />
           </Link>
         )}
       </div>

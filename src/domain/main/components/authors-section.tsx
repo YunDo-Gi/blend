@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowTopRightIcon } from '@radix-ui/react-icons';
 import { useState, useEffect } from 'react';
 import InteractiveAvatar from '../../../shared/icons/interactive-avatar';
 import SectionHeader from '../../../shared/ui/section-header';
@@ -88,7 +89,7 @@ export default function AuthorsSection() {
             className="hover:text-primary/75 group flex items-center justify-between text-sm transition-colors"
           >
             <span>GITHUB</span>
-            <span className="transition-transform group-hover:translate-x-1">→</span>
+            <ArrowTopRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
       </div>

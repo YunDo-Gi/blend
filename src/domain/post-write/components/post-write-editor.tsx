@@ -1,5 +1,6 @@
 'use client';
 
+import { ImageIcon } from '@radix-ui/react-icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { JSONContent } from '@tiptap/react';
@@ -26,9 +27,7 @@ function sanitizeNodeForCreate(node: JSONContent): JSONContent {
   const { attrs, content, ...rest } = node;
   const sanitizedAttrs =
     attrs && typeof attrs === 'object'
-      ? Object.fromEntries(
-          Object.entries(attrs).filter(([, value]) => value !== null && value !== undefined)
-        )
+      ? Object.fromEntries(Object.entries(attrs).filter(([, value]) => value !== null && value !== undefined))
       : undefined;
 
   return {
@@ -45,12 +44,7 @@ function buildCreateContentPayload(content: JSONContent): JSONContent[] {
 
 function resolveAssetUrl(url?: string | null): string {
   if (!url) return '';
-  if (
-    url.startsWith('http://') ||
-    url.startsWith('https://') ||
-    url.startsWith('blob:') ||
-    url.startsWith('data:')
-  ) {
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('blob:') || url.startsWith('data:')) {
     return url;
   }
 
@@ -473,21 +467,7 @@ export default function PostWriteEditor({ initialMode }: PostWriteEditorProps) {
                   onClick={() => fileInputRef.current?.click()}
                   className="text-gray hover:text-foreground flex flex-col items-center gap-2 transition-colors"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
-                    <circle cx="9" cy="9" r="2" />
-                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
-                  </svg>
+                  <ImageIcon className="h-6 w-6" />
                   <span className="font-mono text-xs">SELECT IMAGE</span>
                 </button>
               )}

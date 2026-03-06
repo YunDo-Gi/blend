@@ -1,5 +1,5 @@
+import { ArrowLeftIcon, ArrowRightIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
-import { ArrowIcon } from '../icons/arrow-icon';
 
 interface NavigationButtonProps {
   href?: string;
@@ -13,18 +13,15 @@ const disabledClasses = 'text-gray';
 
 export function NavigationButton({ href, direction, disabled = false }: NavigationButtonProps) {
   const className = `${baseClasses} ${disabled ? disabledClasses : enabledClasses}`;
+  const icon = direction === 'left' ? <ArrowLeftIcon className="h-4 w-4" /> : <ArrowRightIcon className="h-4 w-4" />;
 
   if (disabled || !href) {
-    return (
-      <span className={className}>
-        <ArrowIcon direction={direction} />
-      </span>
-    );
+    return <span className={className}>{icon}</span>;
   }
 
   return (
     <Link href={href} className={className}>
-      <ArrowIcon direction={direction} />
+      {icon}
     </Link>
   );
 }
