@@ -1,3 +1,5 @@
+import { SlashIcon } from '@radix-ui/react-icons';
+
 interface SectionHeaderProps {
   title: string;
   children?: React.ReactNode;
@@ -6,14 +8,15 @@ interface SectionHeaderProps {
 export default function SectionHeader({ title, children }: SectionHeaderProps) {
   return (
     <div className="w-full">
-      {/* Header */}
       <div className="mb-1 flex items-center justify-between">
-        <h2 className="font-mono text-sm font-normal tracking-wide">{title}</h2>
+        <h2 className="text-foreground inline-flex items-center gap-1.5 font-serif text-sm font-normal tracking-wide">
+          <SlashIcon aria-hidden="true" className="h-3 w-3 shrink-0" />
+          <span>{title}</span>
+        </h2>
         {children && <div>{children}</div>}
       </div>
 
-      {/* Divider */}
-      <div className="border-foreground mb-6 border-b"></div>
+      <div className="border-foreground/50 mb-6 border-b"></div>
     </div>
   );
 }

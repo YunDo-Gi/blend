@@ -94,7 +94,7 @@ export default function PostSearchForm({
         aria-haspopup="dialog"
       >
         <MagnifyingGlassIcon className="text-gray-foreground h-[1.125rem] w-[1.125rem] md:h-5 md:w-5" />
-        <span className="text-gray-foreground/80 min-w-0 flex-1 truncate font-mono text-xs tracking-[0.18em] md:text-[13px]">
+        <span className="text-gray-foreground/80 min-w-0 flex-1 truncate font-mono text-xs tracking-[0.12em] md:text-[13px]">
           SEARCH POSTS
         </span>
       </button>

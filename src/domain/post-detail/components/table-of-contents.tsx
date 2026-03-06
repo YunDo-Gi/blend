@@ -70,7 +70,7 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
       <div className="hidden lg:block">
         <div className="sticky top-20 w-52">
           <div>
-            <SectionHeader title="/ CONTENTS" />
+            <SectionHeader title="CONTENTS" />
             <nav className="custom-scrollbar max-h-96 space-y-1 overflow-y-auto">
               {toc.map((item, index) => {
                 const isH1 = item.level === 1;

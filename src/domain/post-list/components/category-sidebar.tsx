@@ -54,7 +54,7 @@ export default function CategorySidebar({
 
   return (
     <div className="w-56 p-4">
-      {!hideHeader && <SectionHeader title="/ CATEGORY" />}
+      {!hideHeader && <SectionHeader title="CATEGORY" />}
 
       {isLoading ? (
         <p className="text-gray text-sm">Loading...</p>

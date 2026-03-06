@@ -8,10 +8,8 @@ export default function CategoryIndexPanel() {
   const { data: categories = [], isLoading } = useCategories();
 
   return (
-    <div className="border-line bg-background text-foreground flex h-full min-h-[22rem] flex-col overflow-hidden border">
-      <div className="border-line min-h-24 flex-1 border-b-2" />
-
-      <div className="divide-line flex flex-col divide-y">
+    <div className="text-foreground flex h-full min-h-[22rem] flex-col justify-center">
+      <div className="divide-line border-line/80 flex flex-col divide-y border-y">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="flex items-center justify-between px-3 py-2.5">
@@ -24,7 +22,7 @@ export default function CategoryIndexPanel() {
             <Link
               key={category.id}
               href={`/posts?category=${category.id}`}
-              className="group hover:bg-gray-2/40 flex items-center justify-between px-3 py-2.5 transition-colors"
+              className="group hover:bg-gray-2/30 flex items-center justify-between px-3 py-2.5 transition-colors"
             >
               <span className="group-hover:text-primary truncate font-serif text-[1.05rem] leading-none tracking-[-0.03em] lowercase transition-colors">
                 {category.name}
@@ -38,7 +36,7 @@ export default function CategoryIndexPanel() {
         ) : (
           <Link
             href="/posts"
-            className="group hover:bg-gray-2/40 flex items-center justify-between px-3 py-2.5 transition-colors"
+            className="group hover:bg-gray-2/30 flex items-center justify-between px-3 py-2.5 transition-colors"
           >
             <span className="group-hover:text-primary truncate font-serif text-[1.05rem] leading-none tracking-[-0.03em] lowercase transition-colors">
               all posts
@@ -50,8 +48,6 @@ export default function CategoryIndexPanel() {
           </Link>
         )}
       </div>
-
-      <div className="border-line min-h-20 flex-1 border-t-2" />
     </div>
   );
 }

@@ -152,7 +152,7 @@ export default function FlipBoard() {
 
   return (
     <>
-      <SectionHeader title="/ POSTS">
+      <SectionHeader title="POSTS">
         <button
           onClick={updateBoard}
           className={`font-mono text-sm transition-colors ${
@@ -163,7 +163,7 @@ export default function FlipBoard() {
           [update]
         </button>
       </SectionHeader>
-      <div ref={containerRef} className="border-foreground border p-4">
+      <div ref={containerRef} className="border-line/80 border p-4">
         <div className="mb-2 flex font-mono" style={{ gap: CELL_GAP }}>
           <div style={{ width: CELL_WIDTH * 6 + CELL_GAP * 5 }}>TIME</div>
           <div>TITLE</div>
@@ -176,12 +176,7 @@ export default function FlipBoard() {
                 const char = gridData[rowIndex]?.[colIndex] || ' ';
                 return (
                   <div key={`${rowIndex}-${colIndex}`} style={{ width: CELL_WIDTH }} className="shrink-0">
-                    <FlipCell
-                      targetChar={char}
-                      shouldFlip={shouldFlip}
-                      rowIndex={rowIndex}
-                      colIndex={colIndex}
-                    />
+                    <FlipCell targetChar={char} shouldFlip={shouldFlip} rowIndex={rowIndex} colIndex={colIndex} />
                   </div>
                 );
               })}

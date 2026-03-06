@@ -15,7 +15,7 @@ export default function SettingsPage() {
         </header>
 
         <section>
-          <SectionHeader title="/ CATEGORIES" />
+          <SectionHeader title="CATEGORIES" />
           <CategoryManager />
         </section>
       </div>

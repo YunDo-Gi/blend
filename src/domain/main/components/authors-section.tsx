@@ -47,7 +47,7 @@ export default function AuthorsSection() {
 
   return (
     <>
-      <SectionHeader title="/ AUTHORS">
+      <SectionHeader title="AUTHORS">
         {/* Dot Indicators */}
         <div className="flex gap-2">
           {authors.map((_, index) => (
@@ -64,24 +64,24 @@ export default function AuthorsSection() {
       </SectionHeader>
 
       {/* Avatar */}
-      <div className="border-foreground mb-6 flex w-full items-center justify-center border p-2">
+      <div className="border-line/80 mb-5 flex w-full items-center justify-center border p-2">
         <InteractiveAvatar className="max-h-full max-w-full" />
       </div>
 
       {/* Author Info */}
-      <div className="text-foreground space-y-3 font-mono text-sm font-medium">
-        <div className="border-foreground border-b border-dotted px-1 pb-2">
+      <div className="divide-line/80 text-foreground flex flex-col divide-y font-serif text-sm font-medium">
+        <div className="px-1 py-2.5 pt-0">
           <span>NAME : </span>
           <span>{currentAuthor.name}</span>
         </div>
 
-        <div className="border-foreground border-b border-dotted px-1 pb-2">
+        <div className="truncate px-1 py-2.5">
           <span>POSITION : </span>
           <span className="bg-primary/75 p-1">{currentAuthor.position}</span>
           <span> DEVELOPER</span>
         </div>
 
-        <div className="px-1">
+        <div className="px-1 py-2.5 pb-0">
           <a
             href={currentAuthor.github}
             target="_blank"
