@@ -11,31 +11,75 @@ interface PostListProps {
   onTotalCountChange?: (count: number) => void;
 }
 
+const POSTS_PER_PAGE = 10;
+const SEARCH_FETCH_LIMIT = 1000;
+
 export default function PostList({ onTotalCountChange }: PostListProps) {
   const searchParams = useSearchParams();
 
-  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const pageParam = parseInt(searchParams.get('page') || '1', 10);
+  const currentPage = Number.isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
   const selectedCategory = searchParams.get('category') || '';
+  const searchQuery = searchParams.get('q') || '';
+  const normalizedSearchQuery = searchQuery.trim().toLocaleLowerCase();
+  const isSearching = normalizedSearchQuery.length > 0;
 
-  const { data, isLoading } = usePosts({
-    page: currentPage,
-    limit: 10,
-    category: selectedCategory || undefined,
-  });
+  const paginatedPostsQuery = usePosts(
+    {
+      page: currentPage,
+      limit: POSTS_PER_PAGE,
+      category: selectedCategory || undefined,
+    },
+    {
+      enabled: !isSearching,
+    },
+  );
+  const searchablePostsQuery = usePosts(
+    {
+      page: 1,
+      limit: SEARCH_FETCH_LIMIT,
+      category: selectedCategory || undefined,
+    },
+    {
+      enabled: isSearching,
+    },
+  );
 
-  const posts = data?.data ?? [];
-  const pagination = data?.pagination ?? null;
+  const paginatedPosts = useMemo(() => paginatedPostsQuery.data?.data ?? [], [paginatedPostsQuery.data?.data]);
+  const pagination = paginatedPostsQuery.data?.pagination ?? null;
+  const searchablePosts = useMemo(() => searchablePostsQuery.data?.data ?? [], [searchablePostsQuery.data?.data]);
+
+  const filteredPosts = useMemo(() => {
+    if (!isSearching) return paginatedPosts;
+
+    return searchablePosts.filter((post) => post.title.toLocaleLowerCase().includes(normalizedSearchQuery));
+  }, [isSearching, normalizedSearchQuery, paginatedPosts, searchablePosts]);
+
+  const totalCount = isSearching ? filteredPosts.length : (pagination?.total ?? 0);
 
   useEffect(() => {
-    if (pagination) {
-      onTotalCountChange?.(pagination.total);
-    }
-  }, [pagination, onTotalCountChange]);
+    onTotalCountChange?.(totalCount);
+  }, [onTotalCountChange, totalCount]);
 
   const totalPages = useMemo(() => {
+    if (isSearching) {
+      return Math.max(1, Math.ceil(totalCount / POSTS_PER_PAGE));
+    }
+
     if (!pagination) return 1;
     return Math.ceil(pagination.total / pagination.limit);
-  }, [pagination]);
+  }, [isSearching, pagination, totalCount]);
+
+  const activePage = isSearching ? Math.min(currentPage, totalPages) : currentPage;
+
+  const posts = useMemo(() => {
+    if (!isSearching) return paginatedPosts;
+
+    const startIndex = (activePage - 1) * POSTS_PER_PAGE;
+    return filteredPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  }, [activePage, filteredPosts, isSearching, paginatedPosts]);
+
+  const isLoading = isSearching ? searchablePostsQuery.isLoading : paginatedPostsQuery.isLoading;
 
   if (isLoading) return null;
 
@@ -54,12 +98,11 @@ export default function PostList({ onTotalCountChange }: PostListProps) {
 
       {posts.length === 0 && (
         <div className="p-8 text-center" style={{ color: 'var(--color-gray)' }}>
-          게시글이 없습니다.
+          {isSearching ? '검색 결과가 없습니다.' : '게시글이 없습니다.'}
         </div>
       )}
 
-      {posts.length > 0 && <Pagination currentPage={currentPage} totalPages={totalPages} />}
+      {posts.length > 0 && <Pagination currentPage={activePage} totalPages={totalPages} />}
     </div>
   );
 }
-

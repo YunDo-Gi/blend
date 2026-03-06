@@ -16,10 +16,11 @@ export const postKeys = {
   myList: (params: MyPostsParams) => [...postKeys.myPosts(), params] as const,
 };
 
-export function usePosts(params: PostListParams = {}) {
+export function usePosts(params: PostListParams = {}, options: QueryOptions = {}) {
   return useQuery({
     queryKey: postKeys.list(params),
     queryFn: () => postApi.getAll(params),
+    enabled: options.enabled ?? true,
   });
 }
 

@@ -7,9 +7,16 @@ import { useCategories } from '@/shared/hooks/use-categories';
 interface CategorySidebarProps {
   onCategoryChangeAction: (category: string) => void;
   mobile?: boolean;
+  hideHeader?: boolean;
+  variant?: 'list' | 'chips';
 }
 
-export default function CategorySidebar({ onCategoryChangeAction, mobile = false }: CategorySidebarProps) {
+export default function CategorySidebar({
+  onCategoryChangeAction,
+  mobile = false,
+  hideHeader = false,
+  variant = 'list',
+}: CategorySidebarProps) {
   const searchParams = useSearchParams();
   const { data: categories = [], isLoading } = useCategories();
 
@@ -19,9 +26,9 @@ export default function CategorySidebar({ onCategoryChangeAction, mobile = false
     onCategoryChangeAction(categoryValue);
   };
 
-  if (mobile) {
+  if (mobile || variant === 'chips') {
     return (
-      <div className="flex gap-2 overflow-x-auto pb-2">
+      <div className="flex gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-visible md:pb-2">
         <button
           onClick={() => handleCategoryClick('all')}
           className={`border-line shrink-0 border px-3 py-1.5 font-mono text-sm transition-colors ${
@@ -47,7 +54,7 @@ export default function CategorySidebar({ onCategoryChangeAction, mobile = false
 
   return (
     <div className="w-56 p-4">
-      <SectionHeader title="/ CATEGORY" />
+      {!hideHeader && <SectionHeader title="/ CATEGORY" />}
 
       {isLoading ? (
         <p className="text-gray text-sm">Loading...</p>
