@@ -8,7 +8,7 @@ import { AuthGuard } from '@/domain/auth/components/auth-guard';
 import { useAuth } from '@/domain/auth/providers/auth-provider';
 import { clearLocalNewDraft, getLocalNewDraft, hasLocalNewDraft } from '@/domain/post-write/hooks/use-post-draft';
 import { useMyDrafts, usePost } from '@/shared/hooks/use-posts';
-import { Post } from '@/shared/types/api';
+import { Post, PostSummary } from '@/shared/types/api';
 
 type WriteMode = { type: 'new' } | { type: 'draft'; postId: string; post: Post };
 
@@ -71,11 +71,11 @@ function WritePageContent() {
   }, []);
 
   const handleSelectServer = useCallback(
-    (post: Post) => {
+    (post: PostSummary) => {
       setSelectedMode(null);
       router.replace(`/write?draft=${post.id}`);
     },
-    [router]
+    [router],
   );
 
   const handleSelectNew = useCallback(() => {

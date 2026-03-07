@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Post } from '@/shared/types/api';
+import { PostSummary } from '@/shared/types/api';
 import { StoredDraft } from '../hooks/use-post-draft';
 import { formatRelativeTime } from '@/shared/lib/date';
 
@@ -9,10 +9,10 @@ interface DraftSelectModalProps {
   isOpen: boolean;
   onClose: () => void;
   localDraft: StoredDraft | null;
-  serverDrafts: Post[];
+  serverDrafts: PostSummary[];
   isLoadingServerDrafts: boolean;
   onSelectLocal: () => void;
-  onSelectServer: (post: Post) => void;
+  onSelectServer: (post: PostSummary) => void;
   onSelectNew: () => void;
 }
 
@@ -48,9 +48,7 @@ export function DraftSelectModal({
       {/* Modal */}
       <div className="fixed top-1/2 left-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2">
         <div className="border-line bg-background border p-6">
-          <h2 className="text-foreground mb-6 font-mono text-lg">
-            {hasAnyDraft ? '이어서 작성하기' : '새 글 작성'}
-          </h2>
+          <h2 className="text-foreground mb-6 font-mono text-lg">{hasAnyDraft ? '이어서 작성하기' : '새 글 작성'}</h2>
 
           <div className="space-y-3">
             {/* 로컬 임시저장 */}
@@ -73,9 +71,7 @@ export function DraftSelectModal({
 
             {/* 서버 임시저장 목록 */}
             {isLoadingServerDrafts ? (
-              <div className="text-gray py-4 text-center font-mono text-sm">
-                불러오는 중...
-              </div>
+              <div className="text-gray py-4 text-center font-mono text-sm">불러오는 중...</div>
             ) : (
               serverDrafts.map((draft) => (
                 <button
@@ -89,9 +85,7 @@ export function DraftSelectModal({
                   <div className="text-foreground group-hover:text-primary truncate font-mono transition-colors">
                     {draft.title || '제목 없음'}
                   </div>
-                  <div className="text-gray mt-1 font-mono text-xs">
-                    {formatRelativeTime(draft.created_at)}
-                  </div>
+                  <div className="text-gray mt-1 font-mono text-xs">{formatRelativeTime(draft.created_at)}</div>
                 </button>
               ))
             )}

@@ -1,4 +1,5 @@
-﻿import PostContent from '@/domain/post-detail/components/post-content';
+﻿import { Suspense } from 'react';
+import PostContent from '@/domain/post-detail/components/post-content';
 import TableOfContents from '@/domain/post-detail/components/table-of-contents';
 import CommentsSection from '@/domain/post-detail/components/comments-section';
 import PostHeader from '@/domain/post-detail/components/post-header';
@@ -408,14 +409,16 @@ export default function TestPage() {
         <div className="max-w-2xl flex-1">
           <PostHeader post={testPost} />
 
-          <PostContent
-            blocks={testBlocks}
-            postId={testPost.id}
-            postTitle={testPost.title}
-            postAuthor={testPost.author}
-            postThumbnail={testPost.thumbnail}
-            postCategory={testPost.category}
-          />
+          <Suspense fallback={<div className="text-gray-foreground py-10 font-mono text-sm">Loading post...</div>}>
+            <PostContent
+              blocks={testBlocks}
+              postId={testPost.id}
+              postTitle={testPost.title}
+              postAuthor={testPost.author}
+              postThumbnail={testPost.thumbnail}
+              postCategory={testPost.category}
+            />
+          </Suspense>
 
           <CommentsSection postId={testPost.id} />
         </div>

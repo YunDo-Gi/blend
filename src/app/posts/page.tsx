@@ -54,7 +54,7 @@ function PostPageContent() {
               <span className="group-hover:text-primary font-serif text-[clamp(3.5rem,10vw,6.5rem)] leading-none font-medium transition-colors duration-300">
                 Post
               </span>
-              <span className="text-foreground text-primary pt-1 font-mono text-sm font-bold sm:text-base md:text-lg xl:text-xl">
+              <span className="text-foreground pt-1 font-mono text-sm font-bold sm:text-base md:text-lg xl:text-xl">
                 ({totalCount})
               </span>
             </span>
