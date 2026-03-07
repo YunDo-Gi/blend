@@ -5,6 +5,7 @@ import FlipBoard from '@/domain/main/components/flip-board';
 import LampToggle from '@/domain/main/components/lamp-toggle';
 import NewsFactoryBar from '@/domain/main/components/news-factory-bar';
 import CategoryIndexPanel from '@/domain/main/components/category-index-panel';
+import ContinueReadingSection from '@/domain/main/components/continue-reading-section';
 
 export default function Home() {
   return (
@@ -22,7 +23,23 @@ export default function Home() {
           <div className="md:border-line p-(--layout-grid-padding) md:border-r lg:col-span-7">
             <RecentSection />
           </div>
-          <div className="lg:border-line p-(--layout-grid-padding) lg:col-span-3 lg:border-r">2</div>
+          <div className="lg:border-line relative overflow-hidden p-(--layout-grid-padding) lg:col-span-3 lg:border-r">
+            <div
+              aria-hidden="true"
+              className="bg-foreground pointer-events-none absolute bottom-[32%] left-1/2 z-10 h-[23%] w-[92%] -translate-x-1/2"
+              style={{
+                clipPath: 'polygon(5% 0%, 95% 0%, 100% 100%, 0% 100%)',
+              }}
+            />
+
+            <div className="relative z-20 translate-y-9">
+              <ContinueReadingSection />
+            </div>
+            <div
+              aria-hidden="true"
+              className="border-line/40 bg-foreground pointer-events-none absolute bottom-0 left-1/2 z-30 h-[32%] w-[92%] -translate-x-1/2 border-x border-t"
+            />
+          </div>
           <div className="hidden flex-col justify-between lg:col-span-2 lg:flex">
             <LampToggle />
             <div className="mt-4">

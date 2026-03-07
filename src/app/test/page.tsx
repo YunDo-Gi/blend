@@ -408,7 +408,14 @@ export default function TestPage() {
         <div className="max-w-2xl flex-1">
           <PostHeader post={testPost} />
 
-          <PostContent blocks={testBlocks} postId={testPost.id} />
+          <PostContent
+            blocks={testBlocks}
+            postId={testPost.id}
+            postTitle={testPost.title}
+            postAuthor={testPost.author}
+            postThumbnail={testPost.thumbnail}
+            postCategory={testPost.category}
+          />
 
           <CommentsSection postId={testPost.id} />
         </div>

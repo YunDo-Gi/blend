@@ -40,7 +40,14 @@ export default function PostPageClientFallback({ slug }: PostPageClientFallbackP
       <div className="flex justify-center gap-8">
         <div className="max-w-2xl flex-1">
           <PostHeader post={post} />
-          <PostContent blocks={post.blocks} postId={post.id} />
+          <PostContent
+            blocks={post.blocks}
+            postId={post.id}
+            postTitle={post.title}
+            postAuthor={post.author}
+            postThumbnail={post.thumbnail}
+            postCategory={post.category}
+          />
           <CommentsSection postId={post.id} />
         </div>
         <TableOfContents toc={toc} />

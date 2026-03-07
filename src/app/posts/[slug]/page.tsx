@@ -12,8 +12,7 @@ interface PostPageProps {
   params: Promise<{ slug: string }>;
 }
 
-const SERVER_API_BASE_URL =
-  process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://tteokyi.com';
+const SERVER_API_BASE_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'https://tteokyi.com';
 
 async function getPost(id: string): Promise<Post | null> {
   const reqHeaders = await headers();
@@ -61,7 +60,14 @@ export default async function PostPage({ params }: PostPageProps) {
         <div className="max-w-2xl flex-1">
           <PostHeader post={post} />
 
-          <PostContent blocks={post.blocks} postId={post.id} />
+          <PostContent
+            blocks={post.blocks}
+            postId={post.id}
+            postTitle={post.title}
+            postAuthor={post.author}
+            postThumbnail={post.thumbnail}
+            postCategory={post.category}
+          />
 
           <CommentsSection postId={post.id} />
         </div>
